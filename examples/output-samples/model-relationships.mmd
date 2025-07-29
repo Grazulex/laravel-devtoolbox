@@ -1,16 +1,16 @@
 graph TB
-    User[User] --> Post[Post]
-    User[User] --> Role[Role]
-    User[User] --> UserProfile[UserProfile]
-    Post[Post] --> User[User]
-    Post[Post] --> Comment[Comment]
-    Post[Post] --> Tag[Tag]
-    Post[Post] --> Category[Category]
-    Comment[Comment] --> Post[Post]
-    Comment[Comment] --> User[User]
-    Comment[Comment] --> Comment[Comment]
-    Category[Category] --> Post[Post]
-    Category[Category] --> Category[Category]
-    Tag[Tag] --> Post[Post]
-    Role[Role] --> User[User]
-    UserProfile[UserProfile] --> User[User]
+    User ||--o{ Post : hasMany
+    User }o--o{ Role : belongsToMany
+    User ||--|| UserProfile : hasOne
+    Post }o--|| User : belongsTo
+    Post ||--o{ Comment : hasMany
+    Post }o--o{ Tag : belongsToMany
+    Post }o--|| Category : belongsTo
+    Comment }o--|| Post : belongsTo
+    Comment }o--|| User : belongsTo
+    Comment ||--o{ Comment : hasMany
+    Category ||--o{ Post : hasMany
+    Category ||--o{ Category : hasMany
+    Tag }o--o{ Post : belongsToMany
+    Role }o--o{ User : belongsToMany
+    UserProfile }o--|| User : belongsTo
