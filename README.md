@@ -7,8 +7,8 @@ Swiss-army artisan CLI for Laravel — Scan, inspect, debug, and explore every a
 [![Latest Version](https://img.shields.io/packagist/v/grazulex/laravel-devtoolbox.svg?style=flat-square)](https://packagist.org/packages/grazulex/laravel-devtoolbox)
 [![Total Downloads](https://img.shields.io/packagist/dt/grazulex/laravel-devtoolbox.svg?style=flat-square)](https://packagist.org/packages/grazulex/laravel-devtoolbox)
 [![License](https://img.shields.io/github/license/grazulex/laravel-devtoolbox.svg?style=flat-square)](https://github.com/Grazulex/laravel-devtoolbox/blob/main/LICENSE.md)
-[![PHP Version](https://img.shields.io/packagist/php-v/grazulex/laravel-devtoolbox.svg?style=flat-square)](https://php.net/)
-[![Laravel Version](https://img.shields.io/badge/laravel-12.x-ff2d20?style=flat-square&logo=laravel)](https://laravel.com/)
+[![PHP Version](https://img.shields.io/badge/php-8.3%2B-777bb4?style=flat-square&logo=php)](https://php.net/)
+[![Laravel Version](https://img.shields.io/badge/laravel-11.x%20%7C%2012.x-ff2d20?style=flat-square&logo=laravel)](https://laravel.com/)
 [![Tests](https://img.shields.io/github/actions/workflow/status/grazulex/laravel-devtoolbox/tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/Grazulex/laravel-devtoolbox/actions)
 [![Code Style](https://img.shields.io/badge/code%20style-pint-000000?style=flat-square&logo=laravel)](https://github.com/laravel/pint)
 
@@ -36,7 +36,7 @@ composer require --dev grazulex/laravel-devtoolbox
 
 **Requirements:**
 - PHP 8.3+
-- Laravel 11.0+
+- Laravel 11.0+ | 12.0+
 
 ## 🚀 Quick Start
 
@@ -217,6 +217,14 @@ See the [examples directory](examples/) for complete automation scripts and CI/C
 - **📖 Documentation** - Auto-generate up-to-date application structure docs
 - **⚡ CI/CD Quality Gates** - Automated quality checks and thresholds
 - **🎯 Onboarding** - Help new team members understand application structure
+
+## 🆕 Version Compatibility
+
+| Laravel Devtoolbox | PHP Version | Laravel Version | Status |
+|-------------------|-------------|-----------------|---------|
+| 1.x              | 8.3+        | 11.x \| 12.x   | ✅ Active |
+
+> **Note:** This package now fully supports both Laravel 11 and Laravel 12, ensuring compatibility across the latest LTS and current releases.
 
 ## 🤝 Contributing
 
