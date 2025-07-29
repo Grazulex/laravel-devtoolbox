@@ -16,7 +16,7 @@
     "homepage": "https://github.com/grazulex/laravel-devtoolbox",
     "require": {
         "php": "^8.3",
-        "illuminate/support": "^12.19",
+        "illuminate/support": "^11.0|^12.0",
         "nesbot/carbon": "^3.10"
     },
     "require-dev": {
@@ -26,7 +26,7 @@
         "larastan/larastan": "^3.4",
         "rector/rector": "^2.0",
         "doctrine/dbal": "^4.2",
-        "orchestra/testbench": "^10.0"
+        "orchestra/testbench": "^9.0|^10.0"
     },
     "minimum-stability": "stable",
     "prefer-stable": true,
