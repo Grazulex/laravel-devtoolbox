@@ -92,9 +92,19 @@ final class DevModelGraphCommand extends Command
             $mermaid .= "    {$modelName}[{$model['name']}]\n";
 
             if (isset($model['relationships']) && ! empty($model['relationships'])) {
-                foreach ($model['relationships'] as $relationshipName => $relationshipData) {
-                    $relatedModel = $this->sanitizeNodeName($relationshipData['related'] ?? 'Unknown');
-                    $type = $relationshipData['type'] ?? 'unknown';
+                foreach ($model['relationships'] as $key => $relationshipData) {
+                    // Handle both array structures: indexed array and associative array
+                    if (is_string($key)) {
+                        // Associative array case (test data format)
+                        $relationshipName = $key;
+                        $relatedModel = $this->sanitizeNodeName($relationshipData['related'] ?? 'Unknown');
+                        $type = $relationshipData['type'] ?? 'unknown';
+                    } else {
+                        // Indexed array case (ModelScanner format)
+                        $relationshipName = $relationshipData['name'] ?? 'unknown';
+                        $relatedModel = $this->sanitizeNodeName($relationshipData['related'] ?? 'Unknown');
+                        $type = $relationshipData['type'] ?? 'unknown';
+                    }
 
                     // Create relationship key to avoid duplicates
                     $relationshipKey = "{$modelName}|{$relatedModel}|{$type}";
