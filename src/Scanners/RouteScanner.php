@@ -46,7 +46,14 @@ final class RouteScanner extends AbstractScanner
         }
 
         if ($options['detect_unused'] ?? false) {
-            $result['unused_routes'] = $this->detectUnusedRoutes($routes);
+            $unusedRoutes = $this->detectUnusedRoutes($routes);
+            $result['unused_routes'] = $unusedRoutes;
+
+            // Mark individual routes as unused
+            foreach ($routes as &$route) {
+                $route['unused'] = $this->isRouteUnused($route);
+            }
+            $result['routes'] = $routes;
         }
 
         return $this->addMetadata($result, $options);
@@ -91,17 +98,123 @@ final class RouteScanner extends AbstractScanner
 
     private function detectUnusedRoutes(array $routes): array
     {
-        // This is a simplified implementation
-        // In reality, you'd scan controllers, views, etc. for route usage
         $unused = [];
 
         foreach ($routes as $route) {
-            // Simple heuristic: routes without names might be unused
-            if (empty($route['name']) && ! str_contains($route['uri'], 'api/')) {
+            if ($this->isRouteUnused($route)) {
                 $unused[] = $route;
             }
         }
 
         return $unused;
+    }
+
+    private function isRouteUnused(array $route): bool
+    {
+        // Skip built-in Laravel routes
+        if ($this->isBuiltInRoute($route)) {
+            return false;
+        }
+
+        // Skip API routes (they might be used by external clients)
+        if (str_contains($route['uri'], 'api/')) {
+            return false;
+        }
+
+        // Heuristics for potentially unused routes:
+
+        // 1. Routes that return static responses without names are suspicious
+        if (empty($route['name']) && $this->hasClosureAction($route)) {
+            // Check if it's a simple closure returning static content
+            return $this->isStaticClosureRoute($route);
+        }
+
+        // 2. Routes with specific patterns that suggest they're for testing/legacy
+        if ($this->hasUnusedPatterns($route)) {
+            return true;
+        }
+        // 3. Routes without middleware that don't follow RESTful patterns
+        return empty($route['middleware']) && $this->isNonStandardRoute($route);
+    }
+
+    private function isBuiltInRoute(array $route): bool
+    {
+        $builtInPatterns = [
+            '_ignition',
+            'livewire',
+            'telescope',
+            'horizon',
+            'debugbar',
+            'sanctum',
+        ];
+
+        foreach ($builtInPatterns as $pattern) {
+            if (str_contains($route['uri'], $pattern)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function hasClosureAction(array $route): bool
+    {
+        return str_contains($route['action'], 'Closure');
+    }
+
+    private function isStaticClosureRoute(array $route): bool
+    {
+        // Routes that return static views or simple strings are often test routes
+        $suspiciousNames = ['test', 'demo', 'sample', 'legacy', 'old', 'unused', 'maintenance'];
+
+        foreach ($suspiciousNames as $name) {
+            if (str_contains(mb_strtolower($route['uri']), $name) ||
+                str_contains(mb_strtolower($route['name'] ?? ''), $name)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function hasUnusedPatterns(array $route): bool
+    {
+        $unusedPatterns = [
+            '/legacy/',
+            '/old-',
+            '/test',
+            '/demo',
+            '/sample',
+            '/unused',
+            '/temp',
+            '/debug',
+            'old-feature',
+            'maintenance',
+            'dangerous-action',
+        ];
+
+        foreach ($unusedPatterns as $pattern) {
+            if (str_contains($route['uri'], $pattern) ||
+                str_contains($route['name'] ?? '', $pattern)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function isNonStandardRoute(array $route): bool
+    {
+        // Routes without auth middleware that perform dangerous actions
+        $dangerousMethods = ['DELETE', 'PUT', 'PATCH'];
+        $routeMethods = $route['methods'] ?? [];
+
+        foreach ($dangerousMethods as $method) {
+            if (in_array($method, $routeMethods, true)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
