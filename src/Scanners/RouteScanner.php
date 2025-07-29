@@ -133,6 +133,7 @@ final class RouteScanner extends AbstractScanner
         if ($this->hasUnusedPatterns($route)) {
             return true;
         }
+
         // 3. Routes without middleware that don't follow RESTful patterns
         return empty($route['middleware']) && $this->isNonStandardRoute($route);
     }
