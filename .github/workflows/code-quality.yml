@@ -12,7 +12,10 @@ permissions:
 jobs:
   code-quality:
     runs-on: ubuntu-latest
-    name: Code Quality (PHP 8.4)
+    strategy:
+      matrix:
+        php: [8.3, 8.4]
+    name: Code Quality (PHP ${{ matrix.php }})
     
     steps:
       - name: Checkout code
@@ -21,7 +24,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 8.4
+          php-version: ${{ matrix.php }}
           extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv
           coverage: none
 
@@ -30,3 +33,6 @@ jobs:
 
       - name: Run PHPStan
         run: vendor/bin/phpstan analyse --memory-limit=2G
+
+      - name: Run PHP Pint (Code Style)
+        run: vendor/bin/pint --test
