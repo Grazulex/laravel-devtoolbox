@@ -129,6 +129,7 @@ final class RouteScanner extends AbstractScanner
                 if ($this->isDangerousDebugRoute($route)) {
                     return true;
                 }
+
                 return $this->isUnprotectedDangerousRoute($route);
             }
 
@@ -140,6 +141,7 @@ final class RouteScanner extends AbstractScanner
             if ($this->hasUnusedPatterns($route)) {
                 return true;
             }
+
             return $this->isUnprotectedDangerousRoute($route);
         }
 
@@ -151,6 +153,7 @@ final class RouteScanner extends AbstractScanner
             if ($this->isUnprotectedDangerousRoute($route)) {
                 return true;
             }
+
             return $this->isUnprotectedAdminRoute($route);
         }
 
@@ -174,6 +177,7 @@ final class RouteScanner extends AbstractScanner
         if ($this->isUnprotectedDangerousRoute($route)) {
             return true;
         }
+
         // Check for administrative routes without authentication
         return $this->isUnprotectedAdminRoute($route);
     }
