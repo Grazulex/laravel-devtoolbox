@@ -182,24 +182,48 @@ php artisan dev:routes --format=json --output=routes.json
 Detect potentially unused routes in your application.
 
 ```bash
-php artisan dev:routes:unused [--format=FORMAT] [--output=FILE]
+php artisan dev:routes:unused [--format=FORMAT] [--output=FILE] [--strict] [--exclude-api] [--security-focused]
 ```
 
 **Options:**
-- `--format=FORMAT` - Output format (array, json, count)
+- `--format=FORMAT` - Output format (table, json)
 - `--output=FILE` - Save output to file
+- `--strict` - Use strict detection (flags unprotected API routes too)
+- `--exclude-api` - Exclude API routes from detection entirely
+- `--security-focused` - Focus on security issues (dangerous unprotected routes)
 
 **Examples:**
 ```bash
-# Find unused routes
+# Find unused routes (default mode)
 php artisan dev:routes:unused
 
-# Count unused routes
-php artisan dev:routes:unused --format=count
+# Exclude API routes from detection
+php artisan dev:routes:unused --exclude-api
 
-# Save analysis
+# Focus on security issues only
+php artisan dev:routes:unused --security-focused
+
+# Use strict detection (flags all unprotected dangerous routes)
+php artisan dev:routes:unused --strict
+
+# Save analysis to file
 php artisan dev:routes:unused --format=json --output=unused-routes.json
 ```
+
+**Detection Logic:**
+This command uses several heuristics to detect potentially unused or problematic routes:
+
+1. **Obvious unused patterns**: Routes containing keywords like "unused", "legacy", "test", "demo", "sample"
+2. **Unprotected debug routes**: Debug routes without authentication middleware
+3. **Unprotected admin routes**: Admin/dashboard/settings routes without authentication
+4. **Dangerous unprotected routes**: POST/PUT/PATCH/DELETE routes without CSRF or auth protection
+5. **Static closure routes**: Unnamed routes returning static content with suspicious patterns
+
+**Detection Modes:**
+- **Default**: Flags obvious unused routes and security issues, includes dangerous API routes
+- **Strict**: Additionally flags all unprotected API routes with dangerous HTTP methods
+- **Security-focused**: Only reports routes with security implications
+- **Exclude API**: Completely ignores API routes (useful for apps with separate API consumers)
 
 ### `dev:routes:where`
 

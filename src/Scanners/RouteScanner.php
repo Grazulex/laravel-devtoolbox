@@ -25,6 +25,8 @@ final class RouteScanner extends AbstractScanner
             'include_parameters' => 'Include route parameters information',
             'detect_unused' => 'Attempt to detect unused routes',
             'filter_methods' => 'Filter by HTTP methods (array)',
+            'strict_unused_detection' => 'Use strict detection (flags unprotected API routes too)',
+            'exclude_api_routes' => 'Exclude API routes from unused detection',
         ];
     }
 
@@ -46,12 +48,12 @@ final class RouteScanner extends AbstractScanner
         }
 
         if ($options['detect_unused'] ?? false) {
-            $unusedRoutes = $this->detectUnusedRoutes($routes);
+            $unusedRoutes = $this->detectUnusedRoutes($routes, $options);
             $result['unused_routes'] = $unusedRoutes;
 
             // Mark individual routes as unused
             foreach ($routes as &$route) {
-                $route['unused'] = $this->isRouteUnused($route);
+                $route['unused'] = $this->isRouteUnused($route, $options);
             }
             $result['routes'] = $routes;
         }
@@ -96,12 +98,12 @@ final class RouteScanner extends AbstractScanner
         return $grouped;
     }
 
-    private function detectUnusedRoutes(array $routes): array
+    private function detectUnusedRoutes(array $routes, array $options): array
     {
         $unused = [];
 
         foreach ($routes as $route) {
-            if ($this->isRouteUnused($route)) {
+            if ($this->isRouteUnused($route, $options)) {
                 $unused[] = $route;
             }
         }
@@ -109,33 +111,71 @@ final class RouteScanner extends AbstractScanner
         return $unused;
     }
 
-    private function isRouteUnused(array $route): bool
+    private function isRouteUnused(array $route, array $options = []): bool
     {
         // Skip built-in Laravel routes
         if ($this->isBuiltInRoute($route)) {
             return false;
         }
 
-        // Skip API routes (they might be used by external clients)
+        // Handle API routes first
         if (str_contains($route['uri'], 'api/')) {
-            return false;
+            if ($options['exclude_api_routes'] ?? false) {
+                return false; // Completely exclude API routes
+            }
+
+            // In security-focused mode, check if API route has security issues
+            if ($options['security_focused'] ?? false) {
+                if ($this->isDangerousDebugRoute($route)) {
+                    return true;
+                }
+                return $this->isUnprotectedDangerousRoute($route);
+            }
+
+            // In strict mode, flag unprotected API routes with dangerous methods
+            if ($options['strict_unused_detection'] ?? false) {
+                return $this->isUnprotectedDangerousRoute($route);
+            }
+            // By default, flag API routes with obvious unused patterns OR unprotected dangerous routes
+            if ($this->hasUnusedPatterns($route)) {
+                return true;
+            }
+            return $this->isUnprotectedDangerousRoute($route);
         }
 
-        // Heuristics for potentially unused routes:
+        // In security-focused mode, prioritize security issues
+        if ($options['security_focused'] ?? false) {
+            if ($this->isDangerousDebugRoute($route)) {
+                return true;
+            }
+            if ($this->isUnprotectedDangerousRoute($route)) {
+                return true;
+            }
+            return $this->isUnprotectedAdminRoute($route);
+        }
 
-        // 1. Routes that return static responses without names are suspicious
+        // Check for obvious unused patterns first
+        if ($this->hasUnusedPatterns($route)) {
+            return true;
+        }
+
+        // Check for debug/dangerous routes (these should be flagged as potentially unused/dangerous)
+        if ($this->isDangerousDebugRoute($route)) {
+            return true;
+        }
+
+        // Routes that return static responses without names are suspicious
         if (empty($route['name']) && $this->hasClosureAction($route)) {
             // Check if it's a simple closure returning static content
             return $this->isStaticClosureRoute($route);
         }
 
-        // 2. Routes with specific patterns that suggest they're for testing/legacy
-        if ($this->hasUnusedPatterns($route)) {
+        // Check for routes without proper protection (especially dangerous methods)
+        if ($this->isUnprotectedDangerousRoute($route)) {
             return true;
         }
-
-        // 3. Routes without middleware that don't follow RESTful patterns
-        return empty($route['middleware']) && $this->isNonStandardRoute($route);
+        // Check for administrative routes without authentication
+        return $this->isUnprotectedAdminRoute($route);
     }
 
     private function isBuiltInRoute(array $route): bool
@@ -188,10 +228,12 @@ final class RouteScanner extends AbstractScanner
             '/sample',
             '/unused',
             '/temp',
-            '/debug',
             'old-feature',
             'maintenance',
             'dangerous-action',
+            'legacy.',
+            'unused.',
+            'legacy-endpoint',
         ];
 
         foreach ($unusedPatterns as $pattern) {
@@ -204,18 +246,109 @@ final class RouteScanner extends AbstractScanner
         return false;
     }
 
-    private function isNonStandardRoute(array $route): bool
+    private function isDangerousDebugRoute(array $route): bool
     {
-        // Routes without auth middleware that perform dangerous actions
-        $dangerousMethods = ['DELETE', 'PUT', 'PATCH'];
-        $routeMethods = $route['methods'] ?? [];
+        $debugPatterns = [
+            '/debug',
+            '/debugbar',
+            '/telescope',
+            '/horizon',
+            'debug.', // for route names like debug.info
+        ];
 
-        foreach ($dangerousMethods as $method) {
-            if (in_array($method, $routeMethods, true)) {
-                return true;
+        // Check if it's a debug route
+        $isDebugRoute = false;
+        foreach ($debugPatterns as $pattern) {
+            if (str_contains($route['uri'], $pattern) ||
+                str_contains($route['name'] ?? '', $pattern)) {
+                $isDebugRoute = true;
+                break;
             }
         }
 
-        return false;
+        if (! $isDebugRoute) {
+            return false;
+        }
+
+        // If it's a debug route but has no authentication middleware, it's dangerous
+        $middleware = $route['middleware'] ?? [];
+        $authMiddleware = ['auth', 'auth:api', 'auth:sanctum', 'auth:web'];
+
+        foreach ($authMiddleware as $auth) {
+            if (in_array($auth, $middleware)) {
+                return false; // Protected debug route is OK
+            }
+        }
+
+        return true; // Unprotected debug route is dangerous
+    }
+
+    private function isUnprotectedDangerousRoute(array $route): bool
+    {
+        $dangerousMethods = ['DELETE', 'PUT', 'PATCH', 'POST'];
+        $routeMethods = $route['methods'] ?? [];
+        $middleware = $route['middleware'] ?? [];
+
+        // Check if route uses dangerous HTTP methods
+        $hasDangerousMethod = false;
+        foreach ($dangerousMethods as $method) {
+            if (in_array($method, $routeMethods, true)) {
+                $hasDangerousMethod = true;
+                break;
+            }
+        }
+
+        if (! $hasDangerousMethod) {
+            return false;
+        }
+
+        // Check if route has any protection middleware
+        $protectionMiddleware = ['auth', 'auth:api', 'auth:sanctum', 'auth:web', 'csrf', 'web'];
+
+        foreach ($protectionMiddleware as $protection) {
+            if (in_array($protection, $middleware)) {
+                return false; // Route is protected
+            }
+        }
+
+        return true; // Dangerous method without protection
+    }
+
+    private function isUnprotectedAdminRoute(array $route): bool
+    {
+        $adminPatterns = [
+            '/admin',
+            '/dashboard',
+            '/settings',
+            'admin.',
+            'dashboard.',
+            'settings.',
+        ];
+
+        // Check if it's an admin route
+        $isAdminRoute = false;
+        foreach ($adminPatterns as $pattern) {
+            if (str_contains($route['uri'], $pattern) ||
+                str_contains($route['name'] ?? '', $pattern)) {
+                $isAdminRoute = true;
+                break;
+            }
+        }
+
+        if (! $isAdminRoute) {
+            return false;
+        }
+
+        // If it's an admin route but has no authentication middleware, it's a problem
+        $middleware = $route['middleware'] ?? [];
+        $authMiddleware = ['auth', 'auth:api', 'auth:sanctum', 'auth:web'];
+
+        foreach ($authMiddleware as $auth) {
+            if (in_array($auth, $middleware)) {
+                return false; // Protected admin route is OK
+            }
+        }
+
+        return true; // Unprotected admin route is a security issue
     }
 }
