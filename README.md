@@ -168,11 +168,14 @@ This creates `config/devtoolbox.php` where you can customize:
 
 ## 📚 Documentation
 
-- **[Complete Documentation](docs/)** - Comprehensive guides and references
-- **[Getting Started](docs/getting-started.md)** - Quick start guide
-- **[Commands Reference](docs/commands/)** - Detailed command documentation
-- **[Configuration](docs/configuration.md)** - Configuration options
-- **[Examples](examples/)** - Practical usage examples
+Comprehensive documentation and examples are available in our **[GitHub Wiki](https://github.com/Grazulex/laravel-devtoolbox/wiki)**:
+
+- **[Getting Started](https://github.com/Grazulex/laravel-devtoolbox/wiki/Getting-Started)** - Quick start guide
+- **[Commands Reference](https://github.com/Grazulex/laravel-devtoolbox/wiki/Commands)** - Detailed command documentation  
+- **[Configuration](https://github.com/Grazulex/laravel-devtoolbox/wiki/Configuration)** - Configuration options
+- **[Examples & Use Cases](https://github.com/Grazulex/laravel-devtoolbox/wiki/Examples)** - Practical usage examples
+- **[CI/CD Integration](https://github.com/Grazulex/laravel-devtoolbox/wiki/CI-CD)** - Automation workflows
+- **[Output Formats](https://github.com/Grazulex/laravel-devtoolbox/wiki/Output-Formats)** - Export format examples
 
 ## 🔧 Examples & Automation
 
@@ -207,7 +210,7 @@ php artisan dev:model:graph --format=mermaid --output=docs/relationships.mmd
 php artisan dev:routes --format=json --output=docs/routes.json
 ```
 
-See the [examples directory](examples/) for complete automation scripts and CI/CD configurations.
+For complete automation scripts and CI/CD configurations, visit our **[Wiki Examples](https://github.com/Grazulex/laravel-devtoolbox/wiki/Examples)**.
 
 ## 🔍 Use Cases
 

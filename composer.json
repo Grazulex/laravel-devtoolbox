@@ -62,7 +62,8 @@
         "issues": "https://github.com/Grazulex/laravel-devtoolbox/issues",
         "source": "https://github.com/Grazulex/laravel-devtoolbox",
         "wiki": "https://github.com/Grazulex/laravel-devtoolbox/wiki",
-        "forum": "https://github.com/Grazulex/laravel-devtoolbox/discussions"
+        "forum": "https://github.com/Grazulex/laravel-devtoolbox/discussions",
+        "docs": "https://github.com/Grazulex/laravel-devtoolbox/wiki"
     },
     "scripts": {
         "test": [
