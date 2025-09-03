@@ -105,6 +105,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Performance Scanner Configuration
+    |--------------------------------------------------------------------------
+    */
+    'performance' => [
+        'memory_threshold' => 80, // Percentage threshold for memory warnings
+        'slow_query_threshold' => 1000, // Milliseconds
+        'include_opcache_analysis' => true,
+        'include_redis_analysis' => true,
+        'include_file_cache_analysis' => true,
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Output Configuration
     |--------------------------------------------------------------------------
     */

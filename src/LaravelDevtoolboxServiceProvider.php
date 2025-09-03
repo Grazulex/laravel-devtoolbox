@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Grazulex\LaravelDevtoolbox;
 
 use Grazulex\LaravelDevtoolbox\Console\Commands\DevAboutPlusCommand;
+use Grazulex\LaravelDevtoolbox\Console\Commands\DevCacheAnalysisCommand;
 use Grazulex\LaravelDevtoolbox\Console\Commands\DevCommandsCommand;
 use Grazulex\LaravelDevtoolbox\Console\Commands\DevContainerBindingsCommand;
 use Grazulex\LaravelDevtoolbox\Console\Commands\DevDbColumnUsageCommand;
@@ -15,7 +16,10 @@ use Grazulex\LaravelDevtoolbox\Console\Commands\DevMiddlewaresWhereUsedCommand;
 use Grazulex\LaravelDevtoolbox\Console\Commands\DevModelGraphCommand;
 use Grazulex\LaravelDevtoolbox\Console\Commands\DevModelsCommand;
 use Grazulex\LaravelDevtoolbox\Console\Commands\DevModelWhereUsedCommand;
+use Grazulex\LaravelDevtoolbox\Console\Commands\DevPerformanceMemoryCommand;
+use Grazulex\LaravelDevtoolbox\Console\Commands\DevPerformanceSlowQueriesCommand;
 use Grazulex\LaravelDevtoolbox\Console\Commands\DevProvidersTimelineCommand;
+use Grazulex\LaravelDevtoolbox\Console\Commands\DevQueueAnalysisCommand;
 use Grazulex\LaravelDevtoolbox\Console\Commands\DevRoutesCommand;
 use Grazulex\LaravelDevtoolbox\Console\Commands\DevRoutesUnusedCommand;
 use Grazulex\LaravelDevtoolbox\Console\Commands\DevRoutesWhereCommand;
@@ -83,6 +87,10 @@ final class LaravelDevtoolboxServiceProvider extends ServiceProvider
                 DevSqlDuplicatesCommand::class,
                 DevProvidersTimelineCommand::class,
                 DevAboutPlusCommand::class,
+                DevPerformanceMemoryCommand::class,
+                DevPerformanceSlowQueriesCommand::class,
+                DevCacheAnalysisCommand::class,
+                DevQueueAnalysisCommand::class,
             ]);
         }
 

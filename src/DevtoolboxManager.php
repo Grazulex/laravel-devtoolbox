@@ -12,6 +12,7 @@ use Grazulex\LaravelDevtoolbox\Scanners\MiddlewareScanner;
 use Grazulex\LaravelDevtoolbox\Scanners\MiddlewareUsageScanner;
 use Grazulex\LaravelDevtoolbox\Scanners\ModelScanner;
 use Grazulex\LaravelDevtoolbox\Scanners\ModelUsageScanner;
+use Grazulex\LaravelDevtoolbox\Scanners\PerformanceScanner;
 use Grazulex\LaravelDevtoolbox\Scanners\ProviderTimelineScanner;
 use Grazulex\LaravelDevtoolbox\Scanners\RouteScanner;
 use Grazulex\LaravelDevtoolbox\Scanners\RouteWhereLookupScanner;
@@ -117,5 +118,6 @@ final class DevtoolboxManager
         $this->registry->register('sql-trace', new SqlTraceScanner($this->app));
         $this->registry->register('security', new SecurityScanner($this->app));
         $this->registry->register('db-column-usage', new DatabaseColumnUsageScanner($this->app));
+        $this->registry->register('performance', new PerformanceScanner($this->app));
     }
 }
