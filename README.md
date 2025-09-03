@@ -85,6 +85,12 @@ php artisan dev:container:bindings --show-resolved
 
 # Service provider performance analysis (new!)
 php artisan dev:providers:timeline --slow-threshold=100
+
+# Performance monitoring (new!)
+php artisan dev:performance:memory --route=dashboard
+php artisan dev:performance:slow-queries --threshold=1000
+php artisan dev:cache:analysis --drivers=redis,file
+php artisan dev:queue:analysis --failed-jobs --slow-jobs
 ```
 
 ## 🔍 Available Commands
@@ -127,6 +133,12 @@ php artisan dev:providers:timeline --slow-threshold=100
 ### Environment & Logging
 - `dev:env:diff` - Compare environment configuration files
 - `dev:log:tail` - Monitor Laravel logs with real-time filtering and pattern matching
+
+### Performance Analysis (new!)
+- `dev:performance:memory` - Analyze memory usage patterns and performance
+- `dev:performance:slow-queries` - Detect and analyze slow database queries
+- `dev:cache:analysis` - Analyze cache performance and configuration
+- `dev:queue:analysis` - Analyze queue performance, failed jobs, and job patterns
 
 ## 📊 Export Formats
 
