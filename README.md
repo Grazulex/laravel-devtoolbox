@@ -307,9 +307,9 @@ Level up your team's Laravel skills with hands-on workshops and mentoring.
 - Creator of popular packages: [DevToolbox](https://github.com/Grazulex/laravel-devtoolbox), [Atlas](https://github.com/Grazulex/laravel-atlas), [ShareLink](https://github.com/Grazulex/laravel-sharelink), [Draftable](https://github.com/Grazulex/laravel-draftable)
 
 ### 📬 Get in Touch:
-- 📧 **Email:** [jms@jnkconsult.be](mailto:jms@jnkconsult.be)
+- 📧 **Email:** [jms@grazulex.be](mailto:jms@grazulex.be)
 - 💼 **LinkedIn:** [Jean-Marc Strauven](https://www.linkedin.com/in/jean-marcstrauven)
-- 🌐 **Website:** [jnkconsult.be](https://jnkconsult.be)
+- 🌐 **Website:** [jnkconsult.be](https://grazulex.be)
 - 💻 **Malt Profile:** Available for freelance projects
 
 💡 **Working on a complex Laravel project?** Let's discuss how I can help you build better, faster, and more maintainable applications.
