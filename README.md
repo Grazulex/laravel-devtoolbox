@@ -308,7 +308,7 @@ Level up your team's Laravel skills with hands-on workshops and mentoring.
 
 ### 📬 Get in Touch:
 - 📧 **Email:** [jms@grazulex.be](mailto:jms@grazulex.be)
-- 💼 **LinkedIn:** [Jean-Marc Strauven](https://www.linkedin.com/in/jean-marcstrauven)
+- 💼 **LinkedIn:** [Jean-Marc Strauven](https://www.linkedin.com/in/jean-marc-strauven)
 - 🌐 **Website:** [jnkconsult.be](https://grazulex.be)
 - 💻 **Malt Profile:** Available for freelance projects
 
