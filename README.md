@@ -259,3 +259,73 @@ Laravel Devtoolbox is open-sourced software licensed under the [MIT license](LIC
     <a href="https://github.com/grazulex/laravel-devtoolbox/wiki">Wiki</a>
   </p>
 </div>
+
+---
+
+## 💼 Need Expert Laravel Help?
+
+Laravel DevToolbox is maintained by **Jean-Marc Strauven**, creator of 17+ Laravel packages with 6,000+ downloads.
+
+### 🎯 Available for:
+
+**🏗️ Custom Laravel Development**
+Build your application from scratch or extend existing systems with clean, maintainable code.
+
+**🔍 Code Audits & Architecture Review**
+Deep analysis of your Laravel projects with detailed recommendations and refactoring roadmap.
+- Complete codebase analysis
+- Architecture documentation
+- Performance bottleneck identification
+- Security audit
+- **Duration:** 2-3 days | **Investment:** €2,500
+
+**⚡ Performance Optimization**
+Scale your Laravel application to handle millions of requests with confidence.
+- Database query optimization
+- Caching strategies
+- Queue optimization
+- Load testing and monitoring
+
+**📦 Custom Package Development**
+Build tailored Laravel packages for your specific business needs.
+- Internal tools and libraries
+- API integrations
+- Third-party service wrappers
+- **Investment:** €5,000-€10,000
+
+**👨‍🏫 Team Training & Consulting**
+Level up your team's Laravel skills with hands-on workshops and mentoring.
+- Laravel best practices
+- Clean architecture principles
+- Testing strategies
+- **€1,500/day** for team workshops
+
+### 👨‍💻 Experience:
+- **15+ years** Laravel/PHP expertise
+- **Ex-CTO** at Delcampe (marketplace with millions of users)
+- **Chapter Lead** at BNP Paribas Fortis
+- Creator of popular packages: [DevToolbox](https://github.com/Grazulex/laravel-devtoolbox), [Atlas](https://github.com/Grazulex/laravel-atlas), [ShareLink](https://github.com/Grazulex/laravel-sharelink), [Draftable](https://github.com/Grazulex/laravel-draftable)
+
+### 📬 Get in Touch:
+- 📧 **Email:** [jms@jnkconsult.be](mailto:jms@jnkconsult.be)
+- 💼 **LinkedIn:** [Jean-Marc Strauven](https://www.linkedin.com/in/jean-marcstrauven)
+- 🌐 **Website:** [jnkconsult.be](https://jnkconsult.be)
+- 💻 **Malt Profile:** Available for freelance projects
+
+💡 **Working on a complex Laravel project?** Let's discuss how I can help you build better, faster, and more maintainable applications.
+
+---
+
+## ⭐ Support This Package
+
+If Laravel DevToolbox saved you time and improved your workflow:
+
+- **⭐ Star this repository** — Help others discover it
+- **🐦 Share it** with your team and network
+- **💖 [Sponsor my work](https://github.com/sponsors/Grazulex)** — Support continued development
+
+Every star and sponsor helps me dedicate more time to maintaining and improving these tools for the Laravel community!
+
+---
+
+**Created with ❤️ in Belgium 🇧🇪 by [Jean-Marc Strauven](https://github.com/Grazulex)**
