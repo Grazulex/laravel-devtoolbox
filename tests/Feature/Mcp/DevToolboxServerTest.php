@@ -9,6 +9,7 @@ use Illuminate\Auth\Middleware\Authenticate;
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Support\Facades\Route;
 use Laravel\Mcp\Server\Testing\TestListResponse;
+use Laravel\Mcp\Server\Testing\TestResponse;
 
 function tool(string $name)
 {
@@ -36,6 +37,26 @@ function listedTools(TestListResponse $response): array
     };
 
     return $reader->bindTo($response, TestListResponse::class)();
+}
+
+/**
+ * @return array<string, mixed>
+ */
+function structured(TestResponse $response): array
+{
+    $reader = function (): array {
+        /** @var array<string, mixed> $content */
+        $content = $this->structuredContent();
+
+        return $content;
+    };
+
+    return $reader->bindTo($response, TestResponse::class)();
+}
+
+function encodedBytes(array $value): int
+{
+    return mb_strlen((string) json_encode($value, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE), '8bit');
 }
 
 beforeEach(function (): void {
@@ -81,4 +102,34 @@ it('rejects arguments of the wrong type', function (): void {
 
 it('rejects a missing required argument', function (): void {
     DevToolboxServer::tool(tool('devtoolbox-model-usage'), [])->assertHasErrors();
+});
+
+it('truncates the routes envelope within the configured byte budget', function (): void {
+    config(['devtoolbox.mcp.max_response_bytes' => 4000]);
+
+    foreach (range(1, 60) as $i) {
+        Route::get("/mcp-test/truncate/$i", fn (): array => ['ok' => true])->name('mcp-test.truncate.'.str_repeat('segment-', 8).$i);
+    }
+    $routeCount = count(Route::getRoutes());
+
+    $response = DevToolboxServer::tool(tool('devtoolbox-routes'), [])->assertOk();
+    $content = structured($response);
+
+    expect($content)->toHaveKeys(['metadata', 'data', '_truncated'])
+        ->and($content['metadata']['scanner'])->toBe('routes')
+        ->and($content['data']['count'])->toBe($routeCount)
+        ->and($content['data']['routes'])->toBeArray()->not->toBeEmpty()
+        ->and(count($content['data']['routes']))->toBeLessThan($routeCount)
+        ->and(array_column($content['data']['routes'], 'uri'))->toBe(array_slice(array_map(fn ($route) => $route->uri(), Route::getRoutes()->getRoutes()), 0, count($content['data']['routes'])))
+        ->and($content['_truncated']['kept_items'])->toBe(count($content['data']['routes']))->toBeGreaterThan(0)
+        ->and($content['_truncated']['original_items'])->toBe($routeCount)
+        ->and($content['_truncated']['path'])->toBe('data.routes')
+        ->and(encodedBytes($content))->toBeLessThanOrEqual(4000);
+});
+
+it('refuses every tool when the current environment is not allowed', function (): void {
+    config(['devtoolbox.mcp.environments' => ['production']]);
+
+    DevToolboxServer::tool(tool('devtoolbox-routes'), [])
+        ->assertHasErrors(['disabled in this environment']);
 });
