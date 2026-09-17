@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- MCP server (`php artisan mcp:start devtoolbox`) exposing every scanner as a tool when `laravel/mcp` is installed. Registered only in `local`/`testing` (configurable via `devtoolbox.mcp`).
+- `AbstractScanner::getOptionSchema()`: typed option declarations, used to build MCP input schemas; `getAvailableOptions()` is now derived from it.
+- Laravel Boost guidelines (`resources/boost/guidelines/core.blade.php`) and the `devtoolbox-analysis` skill.
+- MCP status in `dev:about+`.
+
 ### Changed
 - Applied Rector refactors across `src/` (strict `in_array` checks for nullable strings, closure parameter types, removal of a redundant null argument). No behavioral change.
 - Rector rules that would add parameter types to closures guarding external data are now skipped in `rector.php`.
