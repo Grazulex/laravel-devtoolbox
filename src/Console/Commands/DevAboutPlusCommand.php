@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Grazulex\LaravelDevtoolbox\Console\Commands;
 
 use Exception;
+use Grazulex\LaravelDevtoolbox\Mcp\McpRegistration;
 use Illuminate\Console\Command;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Cache;
@@ -59,6 +60,7 @@ final class DevAboutPlusCommand extends Command
             'application' => $this->getApplicationInfo(),
             'environment' => $this->getEnvironmentInfo($extended),
             'dependencies' => $this->getDependenciesInfo(),
+            'mcp' => $this->getMcpInfo(),
         ];
 
         if ($performance) {
@@ -162,6 +164,17 @@ final class DevAboutPlusCommand extends Command
             'laravel_packages' => array_slice($laravelPackages, 0, 10),
             'symfony_packages' => array_slice($symphonyPackages, 0, 10),
             'composer_version' => $lockData['plugin-api-version'] ?? 'Unknown',
+        ];
+    }
+
+    private function getMcpInfo(): array
+    {
+        return [
+            'installed' => class_exists(\Laravel\Mcp\Facades\Mcp::class),
+            'enabled' => (bool) config('devtoolbox.mcp.enabled', true),
+            'environment_allowed' => McpRegistration::isEnvironmentAllowed($this->laravel),
+            'server' => 'devtoolbox',
+            'start_command' => 'php artisan mcp:start devtoolbox',
         ];
     }
 
@@ -367,6 +380,9 @@ final class DevAboutPlusCommand extends Command
 
         // Dependencies Info
         $this->displaySection('Dependencies', $data['dependencies']);
+
+        // MCP Info
+        $this->displaySection('MCP', $data['mcp']);
 
         // Performance Info (if available)
         if (isset($data['performance'])) {
