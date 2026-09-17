@@ -184,6 +184,12 @@ final class RouteScanner extends AbstractScanner
 
     private function isBuiltInRoute(array $route): bool
     {
+        // Routes registered by the framework itself (local disk file serving / temporary uploads)
+        $name = $route['name'] ?? '';
+        if (is_string($name) && str_starts_with($name, 'storage.')) {
+            return true;
+        }
+
         $builtInPatterns = [
             '_ignition',
             'livewire',
