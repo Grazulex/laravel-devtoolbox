@@ -28,7 +28,6 @@ final class ContainerBindingsScanner extends AbstractScanner
         return [
             'filter' => ['type' => 'string', 'description' => 'Filter bindings by name, namespace, or type'],
             'show_resolved' => ['type' => 'boolean', 'description' => 'Attempt to resolve bindings and show actual instances', 'default' => false],
-            'show_parameters' => ['type' => 'boolean', 'description' => 'Show constructor parameters for classes', 'default' => false],
             'show_aliases' => ['type' => 'boolean', 'description' => 'Include container aliases in output', 'default' => false],
             'group_by' => ['type' => 'string', 'description' => 'Group results by type, namespace or singleton', 'enum' => ['type', 'namespace', 'singleton'], 'default' => 'type'],
         ];

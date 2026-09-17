@@ -20,7 +20,6 @@ final class MiddlewareScanner extends AbstractScanner
     {
         return [
             'include_usage' => ['type' => 'boolean', 'description' => 'Include middleware usage in routes', 'default' => false],
-            'group_by_type' => ['type' => 'boolean', 'description' => 'Group by global, route, and group middleware', 'default' => false],
         ];
     }
 

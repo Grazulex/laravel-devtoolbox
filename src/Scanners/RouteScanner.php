@@ -35,9 +35,13 @@ final class RouteScanner extends AbstractScanner
     {
         $options = $this->mergeOptions($options);
 
-        $routes = collect(Route::getRoutes())->map(function ($route) use ($options): array {
-            return $this->analyzeRoute($route, $options);
-        })->toArray();
+        $methods = array_map('mb_strtoupper', array_filter((array) ($options['filter_methods'] ?? []), 'is_string'));
+
+        $routes = collect(Route::getRoutes())
+            ->filter(fn ($route): bool => $methods === [] || array_intersect($methods, array_map('mb_strtoupper', $route->methods())) !== [])
+            ->map(fn ($route): array => $this->analyzeRoute($route, $options))
+            ->values()
+            ->toArray();
 
         $result = [
             'routes' => $routes,

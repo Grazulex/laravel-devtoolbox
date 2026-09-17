@@ -37,8 +37,6 @@ final class DevDbColumnUsageCommand extends Command
                 'tables' => $tables,
                 'exclude_tables' => $exclude,
                 'unused_only' => $unusedOnly,
-                'include_migrations' => true,
-                'check_fillable' => true,
             ]);
 
             if ($output) {
