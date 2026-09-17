@@ -24,12 +24,12 @@ final class RouteWhereLookupScanner extends AbstractScanner
         return 'Find routes that use a specific controller or method';
     }
 
-    public function getAvailableOptions(): array
+    public function getOptionSchema(): array
     {
         return [
-            'target' => 'Controller class or method to search for (required)',
-            'show_methods' => 'Show available methods in the target controller',
-            'include_parameters' => 'Include route parameters in results',
+            'target' => ['type' => 'string', 'description' => 'Controller class or Controller@method to search for', 'required' => true],
+            'show_methods' => ['type' => 'boolean', 'description' => 'Show available methods in the target controller', 'default' => false],
+            'include_parameters' => ['type' => 'boolean', 'description' => 'Include route parameters in results', 'default' => false],
         ];
     }
 

@@ -18,15 +18,15 @@ final class RouteScanner extends AbstractScanner
         return 'Scan Laravel routes and analyze their usage';
     }
 
-    public function getAvailableOptions(): array
+    public function getOptionSchema(): array
     {
         return [
-            'group_by_middleware' => 'Group routes by their middleware',
-            'include_parameters' => 'Include route parameters information',
-            'detect_unused' => 'Attempt to detect unused routes',
-            'filter_methods' => 'Filter by HTTP methods (array)',
-            'strict_unused_detection' => 'Use strict detection (flags unprotected API routes too)',
-            'exclude_api_routes' => 'Exclude API routes from unused detection',
+            'group_by_middleware' => ['type' => 'boolean', 'description' => 'Group routes by their middleware', 'default' => false],
+            'include_parameters' => ['type' => 'boolean', 'description' => 'Include route parameters information', 'default' => false],
+            'detect_unused' => ['type' => 'boolean', 'description' => 'Attempt to detect unused routes', 'default' => false],
+            'filter_methods' => ['type' => 'array', 'description' => 'Only include routes matching these HTTP methods (e.g. ["GET", "POST"])'],
+            'strict_unused_detection' => ['type' => 'boolean', 'description' => 'Use strict detection (flags unprotected API routes too)', 'default' => false],
+            'exclude_api_routes' => ['type' => 'boolean', 'description' => 'Exclude API routes from unused detection', 'default' => false],
         ];
     }
 

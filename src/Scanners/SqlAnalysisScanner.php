@@ -31,14 +31,14 @@ final class SqlAnalysisScanner extends AbstractScanner
         return 'Analyzes SQL queries for N+1 problems, duplicates, and performance issues';
     }
 
-    public function getAvailableOptions(): array
+    public function getOptionSchema(): array
     {
         return [
-            'route' => 'Specific route to analyze',
-            'url' => 'Specific URL to analyze',
-            'threshold' => 'Duplicate query threshold (default: 2)',
-            'auto_explain' => 'Run EXPLAIN on detected problematic queries',
-            'method' => 'HTTP method for the request (GET, POST, etc.)',
+            'route' => ['type' => 'string', 'description' => 'Named route to analyze (route or url is required)'],
+            'url' => ['type' => 'string', 'description' => 'URL path to analyze (route or url is required)'],
+            'method' => ['type' => 'string', 'description' => 'HTTP method for the request', 'enum' => ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'], 'default' => 'GET'],
+            'threshold' => ['type' => 'integer', 'description' => 'Duplicate query threshold', 'default' => 2],
+            'auto_explain' => ['type' => 'boolean', 'description' => 'Run EXPLAIN on detected problematic queries', 'default' => false],
         ];
     }
 

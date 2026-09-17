@@ -21,15 +21,15 @@ final class DatabaseColumnUsageScanner extends AbstractScanner
         return 'Analyze database column usage across the Laravel application codebase';
     }
 
-    public function getAvailableOptions(): array
+    public function getOptionSchema(): array
     {
         return [
-            'tables' => 'Specific tables to analyze (array)',
-            'exclude_tables' => 'Tables to exclude from analysis (array)',
-            'scan_paths' => 'Paths to scan for column usage (array)',
-            'include_migrations' => 'Include migration files in usage analysis',
-            'unused_only' => 'Show only unused columns',
-            'check_fillable' => 'Check if columns are in model fillable arrays',
+            'tables' => ['type' => 'array', 'description' => 'Specific tables to analyze'],
+            'exclude_tables' => ['type' => 'array', 'description' => 'Tables to exclude from analysis'],
+            'scan_paths' => ['type' => 'array', 'description' => 'Paths to scan for column usage'],
+            'include_migrations' => ['type' => 'boolean', 'description' => 'Include migration files in usage analysis', 'default' => false],
+            'unused_only' => ['type' => 'boolean', 'description' => 'Show only unused columns', 'default' => false],
+            'check_fillable' => ['type' => 'boolean', 'description' => 'Check if columns are in model fillable arrays', 'default' => false],
         ];
     }
 

@@ -18,12 +18,12 @@ final class CommandScanner extends AbstractScanner
         return 'Scan Laravel Artisan commands';
     }
 
-    public function getAvailableOptions(): array
+    public function getOptionSchema(): array
     {
         return [
-            'custom_only' => 'Show only custom (non-Laravel) commands',
-            'include_signatures' => 'Include command signatures and descriptions',
-            'group_by_namespace' => 'Group commands by their namespace',
+            'custom_only' => ['type' => 'boolean', 'description' => 'Show only custom (non-Laravel) commands', 'default' => false],
+            'include_signatures' => ['type' => 'boolean', 'description' => 'Include command signatures and descriptions', 'default' => false],
+            'group_by_namespace' => ['type' => 'boolean', 'description' => 'Group commands by their namespace', 'default' => false],
         ];
     }
 

@@ -27,14 +27,14 @@ final class SqlTraceScanner extends AbstractScanner
         return 'Trace SQL queries executed during route or URL execution';
     }
 
-    public function getAvailableOptions(): array
+    public function getOptionSchema(): array
     {
         return [
-            'route' => 'Named route to trace',
-            'url' => 'URL path to trace',
-            'method' => 'HTTP method (default: GET)',
-            'parameters' => 'Route parameters as JSON object',
-            'headers' => 'Request headers as JSON object',
+            'route' => ['type' => 'string', 'description' => 'Named route to trace (route or url is required)'],
+            'url' => ['type' => 'string', 'description' => 'URL path to trace (route or url is required)'],
+            'method' => ['type' => 'string', 'description' => 'HTTP method', 'enum' => ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'], 'default' => 'GET'],
+            'parameters' => ['type' => 'object', 'description' => 'Route parameters as a JSON object'],
+            'headers' => ['type' => 'object', 'description' => 'Request headers as a JSON object'],
         ];
     }
 

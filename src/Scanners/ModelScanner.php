@@ -22,13 +22,13 @@ final class ModelScanner extends AbstractScanner
         return 'Scan Laravel Eloquent models and their relationships';
     }
 
-    public function getAvailableOptions(): array
+    public function getOptionSchema(): array
     {
         return [
-            'paths' => 'Array of paths to scan for models (default: app/Models)',
-            'include_relationships' => 'Include model relationships in results',
-            'include_attributes' => 'Include model attributes and fillable fields',
-            'include_scopes' => 'Include model scopes',
+            'paths' => ['type' => 'array', 'description' => 'Paths to scan for models (default: app/Models)', 'default' => ['app/Models']],
+            'include_relationships' => ['type' => 'boolean', 'description' => 'Include model relationships in results', 'default' => false],
+            'include_attributes' => ['type' => 'boolean', 'description' => 'Include model attributes and fillable fields', 'default' => false],
+            'include_scopes' => ['type' => 'boolean', 'description' => 'Include model scopes', 'default' => false],
         ];
     }
 

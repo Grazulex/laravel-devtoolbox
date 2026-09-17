@@ -18,13 +18,13 @@ final class SecurityScanner extends AbstractScanner
         return 'Scan Laravel application for security vulnerabilities and unprotected routes';
     }
 
-    public function getAvailableOptions(): array
+    public function getOptionSchema(): array
     {
         return [
-            'check_unprotected_routes' => 'Check for routes without authentication middleware',
-            'check_csrf_protection' => 'Check for routes without CSRF protection',
-            'exclude_patterns' => 'Array of route patterns to exclude from checks',
-            'critical_only' => 'Show only critical security issues',
+            'check_unprotected_routes' => ['type' => 'boolean', 'description' => 'Check for routes without authentication middleware', 'default' => true],
+            'check_csrf_protection' => ['type' => 'boolean', 'description' => 'Check for routes without CSRF protection', 'default' => true],
+            'exclude_patterns' => ['type' => 'array', 'description' => 'Route patterns to exclude from checks'],
+            'critical_only' => ['type' => 'boolean', 'description' => 'Show only critical security issues', 'default' => false],
         ];
     }
 

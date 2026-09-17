@@ -16,11 +16,11 @@ final class MiddlewareScanner extends AbstractScanner
         return 'Scan Laravel middleware and their usage';
     }
 
-    public function getAvailableOptions(): array
+    public function getOptionSchema(): array
     {
         return [
-            'include_usage' => 'Include middleware usage in routes',
-            'group_by_type' => 'Group by global, route, and group middleware',
+            'include_usage' => ['type' => 'boolean', 'description' => 'Include middleware usage in routes', 'default' => false],
+            'group_by_type' => ['type' => 'boolean', 'description' => 'Group by global, route, and group middleware', 'default' => false],
         ];
     }
 

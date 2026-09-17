@@ -22,14 +22,13 @@ final class PerformanceScanner extends AbstractScanner
         return 'Analyze application performance including memory usage, query performance, and cache efficiency';
     }
 
-    public function getAvailableOptions(): array
+    public function getOptionSchema(): array
     {
         return [
-            'route' => 'Specific route to analyze',
-            'include_memory' => 'Include memory usage analysis (default: true)',
-            'include_queries' => 'Include query performance analysis (default: true)',
-            'include_cache' => 'Include cache analysis (default: true)',
-            'format' => 'Output format (array, json, count)',
+            'route' => ['type' => 'string', 'description' => 'Specific named route to analyze; whole application when omitted'],
+            'include_memory' => ['type' => 'boolean', 'description' => 'Include memory usage analysis', 'default' => true],
+            'include_queries' => ['type' => 'boolean', 'description' => 'Include query performance analysis', 'default' => true],
+            'include_cache' => ['type' => 'boolean', 'description' => 'Include cache analysis', 'default' => true],
         ];
     }
 

@@ -20,12 +20,12 @@ final class ServiceScanner extends AbstractScanner
         return 'Scan Laravel service container bindings';
     }
 
-    public function getAvailableOptions(): array
+    public function getOptionSchema(): array
     {
         return [
-            'include_singletons' => 'Include singleton services separately',
-            'include_aliases' => 'Include service aliases',
-            'filter_custom' => 'Show only custom (non-Laravel) services',
+            'include_singletons' => ['type' => 'boolean', 'description' => 'Include singleton services separately', 'default' => false],
+            'include_aliases' => ['type' => 'boolean', 'description' => 'Include service aliases', 'default' => false],
+            'filter_custom' => ['type' => 'boolean', 'description' => 'Show only custom (non-Laravel) services', 'default' => false],
         ];
     }
 
