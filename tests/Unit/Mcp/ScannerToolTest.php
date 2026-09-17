@@ -108,3 +108,22 @@ it('refuses to run once disabled', function (): void {
         ->and((string) $response->content())->toContain('disabled in this environment')
         ->and($scanner->received)->toBe([]);
 });
+
+it('substitutes invalid UTF-8 in the result instead of failing', function (): void {
+    $tool = makeTool(new FakeScanner(result: ['count' => 1, 'queries' => [['sql' => 'select 1', 'bindings' => ["\xB1\x31"]]]]));
+
+    $response = $tool->handle(new Laravel\Mcp\Request(['target' => 'x']));
+
+    expect($response)->toBeInstanceOf(Laravel\Mcp\ResponseFactory::class)
+        ->and($response->getStructuredContent()['queries'][0]['bindings'][0])->toBe("\u{FFFD}1");
+});
+
+it('returns an error response when the result cannot be encoded', function (): void {
+    $tool = makeTool(new FakeScanner(result: ['count' => 1, 'ratio' => NAN]));
+
+    $response = $tool->handle(new Laravel\Mcp\Request(['target' => 'x']));
+
+    expect($response)->toBeInstanceOf(Laravel\Mcp\Response::class)
+        ->and($response->isError())->toBeTrue()
+        ->and((string) $response->content())->toContain('fake:');
+});

@@ -74,7 +74,36 @@ abstract class ScannerTool extends Tool
             return Response::json([]);
         }
 
-        return Response::structured($this->truncator->truncate($result, $this->optionSchema()));
+        try {
+            return Response::structured($this->truncator->truncate($this->sanitize($result), $this->optionSchema()));
+        } catch (Throwable $exception) {
+            Log::debug('[devtoolbox.mcp] result could not be encoded', [
+                'scanner' => $this->scanner->getName(),
+                'exception' => $exception,
+            ]);
+
+            return Response::error(sprintf('%s: result could not be encoded as JSON (%s)', $this->scanner->getName(), $exception->getMessage()));
+        }
+    }
+
+    /**
+     * Replaces invalid UTF-8 (binary SQL bindings, raw file bytes) with U+FFFD so
+     * the result can be encoded; anything else json_encode rejects still throws.
+     *
+     * @param  array<string, mixed>  $result
+     * @return array<string, mixed>
+     */
+    private function sanitize(array $result): array
+    {
+        /** @var array<string, mixed> $sanitized */
+        $sanitized = json_decode(
+            json_encode($result, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE),
+            true,
+            512,
+            JSON_THROW_ON_ERROR,
+        );
+
+        return $sanitized;
     }
 
     /**
