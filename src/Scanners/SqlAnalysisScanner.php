@@ -123,11 +123,11 @@ final class SqlAnalysisScanner extends AbstractScanner
 
     private function executeRequest(?string $route, ?string $url, string $method, array $options): Response
     {
-        if ($route !== null && $route !== '' && $route !== '0') {
+        if (! in_array($route, [null, '', '0'], true)) {
             return $this->executeRouteRequest($route, $method, $options);
         }
 
-        if ($url !== null && $url !== '' && $url !== '0') {
+        if (! in_array($url, [null, '', '0'], true)) {
             return $this->executeUrlRequest($url, $method, $options);
         }
 

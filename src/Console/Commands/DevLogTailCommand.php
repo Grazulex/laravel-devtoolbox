@@ -87,10 +87,10 @@ final class DevLogTailCommand extends Command
         }
 
         $this->info("📡 Following log: {$logPath}");
-        if ($pattern !== null && $pattern !== '' && $pattern !== '0') {
+        if (! in_array($pattern, [null, '', '0'], true)) {
             $this->line("🔍 Pattern: {$pattern}");
         }
-        if ($level !== null && $level !== '' && $level !== '0') {
+        if (! in_array($level, [null, '', '0'], true)) {
             $this->line('📊 Level: '.mb_strtoupper($level));
         }
         $this->line('Press Ctrl+C to stop');
@@ -122,10 +122,10 @@ final class DevLogTailCommand extends Command
     {
         if ($format !== 'json') {
             $this->info("📋 Last {$lines} lines from: {$logPath}");
-            if ($pattern !== null && $pattern !== '' && $pattern !== '0') {
+            if (! in_array($pattern, [null, '', '0'], true)) {
                 $this->line("🔍 Pattern: {$pattern}");
             }
-            if ($level !== null && $level !== '' && $level !== '0') {
+            if (! in_array($level, [null, '', '0'], true)) {
                 $this->line('📊 Level: '.mb_strtoupper($level));
             }
             $this->newLine();

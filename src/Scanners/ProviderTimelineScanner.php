@@ -64,8 +64,8 @@ final class ProviderTimelineScanner extends AbstractScanner
         }
 
         // Sort by boot time (slowest first)
-        usort($analysis, fn ($a, $b): int => $b['boot_time'] <=> $a['boot_time']);
-        usort($slowProviders, fn ($a, $b): int => $b['boot_time'] <=> $a['boot_time']);
+        usort($analysis, fn (array $a, array $b): int => $b['boot_time'] <=> $a['boot_time']);
+        usort($slowProviders, fn (array $a, array $b): int => $b['boot_time'] <=> $a['boot_time']);
 
         // Generate timeline
         $timeline = $this->generateTimeline($analysis);
@@ -291,7 +291,7 @@ final class ProviderTimelineScanner extends AbstractScanner
     private function calculateStatistics(array $providers, float $slowThreshold): array
     {
         $totalProviders = count($providers);
-        $deferredCount = count(array_filter($providers, fn ($p) => $p['is_deferred']));
+        $deferredCount = count(array_filter($providers, fn (array $p) => $p['is_deferred']));
         $eagerCount = $totalProviders - $deferredCount;
 
         $bootTimes = array_column($providers, 'boot_time');

@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Route as RouteFacade;
 use ReflectionClass;
 use ReflectionMethod;
 use ReflectionNamedType;
+use ReflectionParameter;
 
 final class RouteWhereLookupScanner extends AbstractScanner
 {
@@ -196,7 +197,7 @@ final class RouteWhereLookupScanner extends AbstractScanner
                 }
                 $methods[] = [
                     'name' => $method->getName(),
-                    'parameters' => array_map(function ($param): array {
+                    'parameters' => array_map(function (ReflectionParameter $param): array {
                         $type = $param->getType();
                         $typeName = 'mixed';
                         if ($type && $type instanceof ReflectionNamedType) {

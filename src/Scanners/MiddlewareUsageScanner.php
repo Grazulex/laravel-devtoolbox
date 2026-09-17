@@ -289,7 +289,7 @@ final class MiddlewareUsageScanner extends AbstractScanner
             $middlewareProperty->setAccessible(true);
             $globalMiddleware = $middlewareProperty->getValue($kernel);
 
-            return array_map(function ($class): array {
+            return array_map(function (string $class): array {
                 return [
                     'class' => $class,
                     'name' => $this->getMiddlewareName($class),

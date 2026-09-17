@@ -155,7 +155,7 @@ final class SqlTraceScanner extends AbstractScanner
 
     private function makeRequest(string $method, string $uri, array $headers, array $data = []): Response
     {
-        $request = Request::create($uri, $method, $data, [], [], [], null);
+        $request = Request::create($uri, $method, $data, [], [], []);
 
         // Add custom headers
         foreach ($headers as $key => $value) {

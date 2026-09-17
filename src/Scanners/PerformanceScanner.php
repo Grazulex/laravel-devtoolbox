@@ -270,7 +270,7 @@ final class PerformanceScanner extends AbstractScanner
         }
 
         // Filter duplicates (more than 1 occurrence)
-        $duplicates = array_filter($duplicates, fn ($query): bool => $query['count'] > 1);
+        $duplicates = array_filter($duplicates, fn (array $query): bool => $query['count'] > 1);
 
         return [
             'slow_queries' => $slow,

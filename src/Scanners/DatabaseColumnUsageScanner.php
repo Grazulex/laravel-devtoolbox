@@ -131,7 +131,7 @@ final class DatabaseColumnUsageScanner extends AbstractScanner
         ];
 
         // Filter paths to only include those that exist
-        $scanPaths = $options['scan_paths'] ?? array_filter($defaultPaths, fn ($path) => File::exists($path));
+        $scanPaths = $options['scan_paths'] ?? array_filter($defaultPaths, fn (string $path) => File::exists($path));
 
         foreach ($columns as $columnName) {
             $usage = $this->findColumnUsage($tableName, $columnName, $scanPaths);
@@ -167,7 +167,7 @@ final class DatabaseColumnUsageScanner extends AbstractScanner
 
         // Get model-specific information
         $modelClass = $this->findModelForTable($tableName);
-        if ($modelClass !== null && $modelClass !== '' && $modelClass !== '0') {
+        if (! in_array($modelClass, [null, '', '0'], true)) {
             $modelInfo = $this->analyzeModelColumnUsage($modelClass, $columnName);
         }
 
@@ -291,7 +291,7 @@ final class DatabaseColumnUsageScanner extends AbstractScanner
             if (File::exists($path)) {
                 $namespace = $this->extractNamespace(File::get($path));
 
-                return $namespace !== null && $namespace !== '' && $namespace !== '0' ? "{$namespace}\\{$modelName}" : "App\\{$modelName}";
+                return ! in_array($namespace, [null, '', '0'], true) ? "{$namespace}\\{$modelName}" : "App\\{$modelName}";
             }
         }
 
