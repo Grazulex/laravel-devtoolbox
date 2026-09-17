@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Applied Rector refactors across `src/` (strict `in_array` checks for nullable strings, closure parameter types, removal of a redundant null argument). No behavioral change.
+- Rector rules that would add parameter types to closures guarding external data are now skipped in `rector.php`.
+- Bumped `rector/rector` to `^2.1` (2.0.0 is incompatible with recent `nikic/php-parser`).
+
 ## [v1.6.0] - 2026-09-17
 
 ### Added

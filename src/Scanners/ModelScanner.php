@@ -80,7 +80,7 @@ final class ModelScanner extends AbstractScanner
 
         $className = $matches[1];
         $namespace = $this->extractNamespace($content);
-        $fullClassName = $namespace !== null && $namespace !== '' && $namespace !== '0' ? $namespace.'\\'.$className : $className;
+        $fullClassName = ! in_array($namespace, [null, '', '0'], true) ? $namespace.'\\'.$className : $className;
 
         try {
             $reflection = new ReflectionClass($fullClassName);

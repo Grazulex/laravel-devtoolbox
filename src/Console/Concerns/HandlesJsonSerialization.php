@@ -119,7 +119,7 @@ trait HandlesJsonSerialization
     {
         $json = $this->safeJsonEncode($data);
 
-        if ($outputFile !== null && $outputFile !== '' && $outputFile !== '0') {
+        if (! in_array($outputFile, [null, '', '0'], true)) {
             file_put_contents($outputFile, $json);
             // Show info message for non-JSON format (only for command instances with Laravel console methods)
             try {

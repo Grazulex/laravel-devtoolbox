@@ -144,7 +144,7 @@ final class DevQueueAnalysisCommand extends Command
             $table = config('queue.connections.database.table', 'jobs');
 
             $query = DB::table($table);
-            if ($queueName !== null && $queueName !== '' && $queueName !== '0') {
+            if (! in_array($queueName, [null, '', '0'], true)) {
                 $query->where('queue', $queueName);
             }
 
