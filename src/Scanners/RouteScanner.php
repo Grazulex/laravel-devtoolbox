@@ -27,6 +27,7 @@ final class RouteScanner extends AbstractScanner
             'filter_methods' => ['type' => 'array', 'description' => 'Only include routes matching these HTTP methods (e.g. ["GET", "POST"])'],
             'strict_unused_detection' => ['type' => 'boolean', 'description' => 'Use strict detection (flags unprotected API routes too)', 'default' => false],
             'exclude_api_routes' => ['type' => 'boolean', 'description' => 'Exclude API routes from unused detection', 'default' => false],
+            'security_focused' => ['type' => 'boolean', 'description' => 'Focus unused-route detection on security-relevant routes', 'default' => false],
         ];
     }
 

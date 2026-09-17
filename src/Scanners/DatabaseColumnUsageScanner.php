@@ -25,7 +25,7 @@ final class DatabaseColumnUsageScanner extends AbstractScanner
     {
         return [
             'tables' => ['type' => 'array', 'description' => 'Specific tables to analyze'],
-            'exclude_tables' => ['type' => 'array', 'description' => 'Tables to exclude from analysis'],
+            'exclude_tables' => ['type' => 'array', 'description' => 'Tables to exclude from analysis', 'default' => ['migrations', 'password_resets', 'password_reset_tokens', 'personal_access_tokens', 'failed_jobs']],
             'scan_paths' => ['type' => 'array', 'description' => 'Paths to scan for column usage'],
             'include_migrations' => ['type' => 'boolean', 'description' => 'Include migration files in usage analysis', 'default' => false],
             'unused_only' => ['type' => 'boolean', 'description' => 'Show only unused columns', 'default' => false],
