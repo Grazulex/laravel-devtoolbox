@@ -153,6 +153,8 @@ The server is built on `laravel/mcp`, an optional dependency — the package wor
 composer require laravel/mcp --dev
 ```
 
+Installing `laravel/mcp` requires `laravel/framework` 12.41.1 or later (or 13.x); on an older 12.x release, update the framework first.
+
 ### Registration
 
 Register the server with Claude Code:
