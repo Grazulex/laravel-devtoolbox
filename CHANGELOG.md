@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v1.7.0] - 2026-09-17
+
 ### Added
 - MCP server (`php artisan mcp:start devtoolbox`) exposing every scanner as a tool when `laravel/mcp` is installed. Registered only in `local`/`testing` (configurable via `devtoolbox.mcp`).
 - `AbstractScanner::getOptionSchema()`: typed option declarations, used to build MCP input schemas; `getAvailableOptions()` is now derived from it.
