@@ -71,6 +71,29 @@ final class BareScanner extends AbstractScanner
     }
 }
 
+final class ExtendingLegacyScanner extends AbstractScanner
+{
+    public function getName(): string
+    {
+        return 'extending-legacy';
+    }
+
+    public function getDescription(): string
+    {
+        return 'Calls parent::getAvailableOptions() from an override';
+    }
+
+    public function scan(array $options = []): array
+    {
+        return [];
+    }
+
+    public function getAvailableOptions(): array
+    {
+        return array_merge(parent::getAvailableOptions(), ['extra' => 'Extra option (array)']);
+    }
+}
+
 it('derives getAvailableOptions from a declared schema', function (): void {
     $scanner = new SchemaDeclaringScanner($this->app);
 
@@ -91,4 +114,13 @@ it('returns empty schema and options when nothing is declared', function (): voi
 
     expect($scanner->getOptionSchema())->toBe([])
         ->and($scanner->getAvailableOptions())->toBe([]);
+});
+
+it('does not recurse when a legacy override calls parent::getAvailableOptions()', function (): void {
+    $scanner = new ExtendingLegacyScanner($this->app);
+
+    expect($scanner->getAvailableOptions())->toBe(['extra' => 'Extra option (array)'])
+        ->and($scanner->getOptionSchema())->toBe([
+            'extra' => ['type' => 'array', 'description' => 'Extra option (array)'],
+        ]);
 });

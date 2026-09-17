@@ -12,6 +12,8 @@ abstract class AbstractScanner implements ScannerInterface
 {
     protected Application $app;
 
+    private bool $derivingOptions = false;
+
     public function __construct(Application $app)
     {
         $this->app = $app;
@@ -45,10 +47,20 @@ abstract class AbstractScanner implements ScannerInterface
      */
     public function getAvailableOptions(): array
     {
-        return array_map(
-            fn (array $option): string => $option['description'],
-            $this->getOptionSchema(),
-        );
+        if ($this->derivingOptions) {
+            return []; // re-entered from a legacy override calling parent:: while inferring — the base contributes nothing
+        }
+
+        $this->derivingOptions = true;
+
+        try {
+            return array_map(
+                fn (array $option): string => $option['description'],
+                $this->getOptionSchema(),
+            );
+        } finally {
+            $this->derivingOptions = false;
+        }
     }
 
     /**
