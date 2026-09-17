@@ -42,13 +42,13 @@ src/Mcp/
 ├── ReadOnlyScannerTool.php     # #[IsReadOnly] #[IsIdempotent]
 ├── ActiveScannerTool.php       # aucune annotation
 ├── OptionSchemaCompiler.php    # schéma interne → Illuminate\JsonSchema + règles de validation
-├── OptionSchemaInferrer.php    # getAvailableOptions() (texte) → schéma interne (repli)
 └── ResponseTruncator.php       # garde-fou de taille
+src/Scanners/OptionSchemaInferrer.php   # getAvailableOptions() (texte) → schéma interne (repli) ; sans dépendance à laravel/mcp
 resources/boost/guidelines/core.blade.php
 resources/boost/skills/devtoolbox-analysis/SKILL.md
 ```
 
-Aucune classe de `src/Mcp/` n'est chargée si `laravel/mcp` est absent : PHP ne résout
+`OptionSchemaInferrer` et `ResponseTruncator` ne dépendent pas de laravel/mcp. Aucune autre classe de `src/Mcp/` n'est chargée si `laravel/mcp` est absent : PHP ne résout
 la classe parente qu'à l'instanciation, et l'enregistrement est gardé par `class_exists`.
 
 ### 3.2 Enregistrement (`LaravelDevtoolboxServiceProvider::boot()`)
@@ -151,11 +151,11 @@ Pas de récursion entre les deux méthodes : `AbstractScanner::getOptionSchema()
 
 | La sous-classe surcharge… | `getOptionSchema()` | `getAvailableOptions()` |
 |---|---|---|
-| `getOptionSchema()` (les 17 scanners du package) | la sienne | dérivée du schéma |
+| `getOptionSchema()` (les 16 scanners du package) | la sienne | dérivée du schéma |
 | `getAvailableOptions()` seulement (scanner tiers existant) | inférée depuis ses descriptions | la sienne |
 | aucune | `[]` | `[]` |
 
-### 4.2 Les 17 scanners déclarent leur schéma
+### 4.2 Les 16 scanners déclarent leur schéma
 
 Chaque scanner remplace son `getAvailableOptions()` par `getOptionSchema()` avec des types
 exacts, `default` et `enum` quand ils existent (ex. `method` de `sql-trace` : enum des
@@ -243,7 +243,7 @@ Tous les tests MCP portent le groupe `mcp`.
 
 | Niveau | Cas |
 |---|---|
-| Unit | `OptionSchemaInferrer` : chaque règle heuristique ; `OptionSchemaCompiler` : chaque type → JsonSchema et règles de validation attendus ; `ToolFactory` : 17 tools, noms `devtoolbox-*`, classe ReadOnly/Active correcte ; `ResponseTruncator` : gros jeu de données → JSON valide ≤ limite, `_truncated` présent, scalaires conservés |
+| Unit | `OptionSchemaInferrer` : chaque règle heuristique ; `OptionSchemaCompiler` : chaque type → JsonSchema et règles de validation attendus ; `ToolFactory` : 16 tools, noms `devtoolbox-*`, classe ReadOnly/Active correcte ; `ResponseTruncator` : gros jeu de données → JSON valide ≤ limite, `_truncated` présent, scalaires conservés |
 | Par scanner (paramétré sur le registre) | `getOptionSchema()` : types valides, descriptions non vides, `enum`/`default` cohérents ; `getAvailableOptions()` égal aux descriptions du schéma ; aucune option interne (`format`…) dans le schéma |
 | Tools bout en bout (`DevToolboxServer::tool(...)`) | `routes`, `models`, `middleware-usage` → `assertOk()` + structure attendue ; `sql-trace` sur une route de test → ok ; argument de mauvais type → erreur de validation ; scanner qui lève (stub enregistré dans le registre) → `Response::error` sans trace |
 | Garde | serveur absent du registrar si `enabled=false` / env `production` ; `boot()` refuse hors env autorisé |
