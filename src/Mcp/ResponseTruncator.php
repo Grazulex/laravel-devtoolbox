@@ -84,6 +84,6 @@ final class ResponseTruncator
 
     private function size(array $data): int
     {
-        return mb_strlen((string) json_encode($data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
+        return mb_strlen((string) json_encode($data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE), '8bit');
     }
 }

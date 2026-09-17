@@ -9,7 +9,7 @@ function bigResult(int $items): array
     return [
         'count' => $items,
         'scanner' => 'routes',
-        'routes' => array_map(fn (int $i): array => ['uri' => "/path/$i", 'name' => str_repeat('n', 40).$i], range(1, $items)),
+        'routes' => array_map(fn (int $i): array => ['uri' => "/path/$i", 'name' => str_repeat('é', 40).$i], range(1, $items)),
         'grouped_by_middleware' => ['web' => range(1, $items)],
     ];
 }
@@ -24,7 +24,7 @@ it('truncates the first list, drops other big values and annotates', function ()
     $maxBytes = 2_000;
     $truncated = (new ResponseTruncator($maxBytes))->truncate(bigResult(500), ['detect_unused' => ['type' => 'boolean', 'description' => 'x'], 'filter_methods' => ['type' => 'array', 'description' => 'y']]);
 
-    expect(mb_strlen(json_encode($truncated)))->toBeLessThanOrEqual($maxBytes)
+    expect(mb_strlen(json_encode($truncated, JSON_UNESCAPED_UNICODE), '8bit'))->toBeLessThanOrEqual($maxBytes)
         ->and($truncated['count'])->toBe(500)
         ->and($truncated['scanner'])->toBe('routes')
         ->and($truncated['routes'])->toBeArray()->not->toBeEmpty()
@@ -43,4 +43,12 @@ it('keeps zero items when even one does not fit, and stays valid JSON', function
     expect(json_encode($truncated))->toBeString()
         ->and($truncated['_truncated']['kept_items'])->toBe(0)
         ->and($truncated['_truncated']['hint'])->toBe('No options available to refine this scan');
+});
+
+it('measures the budget in bytes, not characters', function (): void {
+    $result = ['count' => 1, 'items' => [str_repeat('é', 100)]]; // 200 bytes of payload, 100 chars
+    $truncated = (new ResponseTruncator(150))->truncate($result, []);
+
+    expect(mb_strlen(json_encode($truncated, JSON_UNESCAPED_UNICODE), '8bit'))->toBeLessThanOrEqual(150)
+        ->and($truncated['_truncated']['kept_items'])->toBe(0);
 });
