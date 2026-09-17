@@ -133,3 +133,8 @@ it('refuses every tool when the current environment is not allowed', function ()
     DevToolboxServer::tool(tool('devtoolbox-routes'), [])
         ->assertHasErrors(['disabled in this environment']);
 });
+
+it('accepts a lower-case HTTP method on the active tools', function (): void {
+    DevToolboxServer::tool(tool('devtoolbox-sql-trace'), ['route' => 'mcp-test.public', 'method' => 'get'])->assertOk();
+    DevToolboxServer::tool(tool('devtoolbox-sql-analysis'), ['route' => 'mcp-test.public', 'method' => 'get'])->assertOk();
+});

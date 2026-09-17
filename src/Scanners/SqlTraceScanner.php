@@ -32,7 +32,7 @@ final class SqlTraceScanner extends AbstractScanner
         return [
             'route' => ['type' => 'string', 'description' => 'Named route to trace (route or url is required)'],
             'url' => ['type' => 'string', 'description' => 'URL path to trace (route or url is required)'],
-            'method' => ['type' => 'string', 'description' => 'HTTP method', 'enum' => ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'], 'default' => 'GET'],
+            'method' => ['type' => 'string', 'description' => 'HTTP method (GET, POST, PUT, PATCH or DELETE, case-insensitive)', 'default' => 'GET'],
             'parameters' => ['type' => 'object', 'description' => 'Route parameters as a JSON object'],
             'headers' => ['type' => 'object', 'description' => 'Request headers as a JSON object'],
         ];

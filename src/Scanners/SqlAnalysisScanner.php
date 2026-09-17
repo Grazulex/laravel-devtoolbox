@@ -36,7 +36,7 @@ final class SqlAnalysisScanner extends AbstractScanner
         return [
             'route' => ['type' => 'string', 'description' => 'Named route to analyze (route or url is required)'],
             'url' => ['type' => 'string', 'description' => 'URL path to analyze (route or url is required)'],
-            'method' => ['type' => 'string', 'description' => 'HTTP method for the request', 'enum' => ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'], 'default' => 'GET'],
+            'method' => ['type' => 'string', 'description' => 'HTTP method for the request (GET, POST, PUT, PATCH or DELETE, case-insensitive)', 'default' => 'GET'],
             'threshold' => ['type' => 'integer', 'description' => 'Duplicate query threshold', 'default' => 2],
             'auto_explain' => ['type' => 'boolean', 'description' => 'Run EXPLAIN on detected problematic queries', 'default' => false],
         ];
@@ -48,7 +48,7 @@ final class SqlAnalysisScanner extends AbstractScanner
         $url = $options['url'] ?? null;
         $threshold = (int) ($options['threshold'] ?? 2);
         $autoExplain = $options['auto_explain'] ?? false;
-        $method = $options['method'] ?? 'GET';
+        $method = mb_strtoupper((string) ($options['method'] ?? 'GET'));
 
         if (! $route && ! $url) {
             return [
