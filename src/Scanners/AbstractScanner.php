@@ -6,14 +6,61 @@ namespace Grazulex\LaravelDevtoolbox\Scanners;
 
 use Grazulex\LaravelDevtoolbox\Contracts\ScannerInterface;
 use Illuminate\Contracts\Foundation\Application;
+use ReflectionMethod;
 
 abstract class AbstractScanner implements ScannerInterface
 {
     protected Application $app;
 
+    private bool $derivingOptions = false;
+
     public function __construct(Application $app)
     {
         $this->app = $app;
+    }
+
+    /**
+     * Typed description of the options accepted by scan().
+     *
+     * Bundled scanners override this. Third-party scanners that only override
+     * getAvailableOptions() get an inferred schema.
+     *
+     * @return array<string, array{
+     *     type: 'boolean'|'string'|'integer'|'array'|'object',
+     *     description: string,
+     *     default?: mixed,
+     *     enum?: list<string>,
+     *     required?: bool
+     * }>
+     */
+    public function getOptionSchema(): array
+    {
+        if (! $this->overrides('getAvailableOptions')) {
+            return [];
+        }
+
+        return OptionSchemaInferrer::fromDescriptions($this->getAvailableOptions());
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function getAvailableOptions(): array
+    {
+        if ($this->derivingOptions) {
+            return []; // re-entered from a legacy override calling parent:: while inferring — the base contributes nothing
+        }
+
+        $this->derivingOptions = true;
+
+        try {
+            return array_map(
+                fn (array $option): string => $option['description'],
+                $this->getOptionSchema(),
+            );
+        } finally {
+            $this->derivingOptions = false;
+        }
     }
 
     /**
@@ -85,5 +132,10 @@ abstract class AbstractScanner implements ScannerInterface
             ],
             'data' => $data,
         ];
+    }
+
+    private function overrides(string $method): bool
+    {
+        return (new ReflectionMethod($this, $method))->getDeclaringClass()->getName() !== self::class;
     }
 }

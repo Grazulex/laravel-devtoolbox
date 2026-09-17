@@ -23,14 +23,13 @@ final class ContainerBindingsScanner extends AbstractScanner
         return 'Analyzes Laravel container bindings, singletons, and dependency injection mappings';
     }
 
-    public function getAvailableOptions(): array
+    public function getOptionSchema(): array
     {
         return [
-            'filter' => 'Filter bindings by name, namespace, or type',
-            'show_resolved' => 'Attempt to resolve bindings and show actual instances',
-            'show_parameters' => 'Show constructor parameters for classes',
-            'show_aliases' => 'Include container aliases in output',
-            'group_by' => 'Group results by (type, namespace, singleton)',
+            'filter' => ['type' => 'string', 'description' => 'Filter bindings by name, namespace, or type'],
+            'show_resolved' => ['type' => 'boolean', 'description' => 'Attempt to resolve bindings and show actual instances', 'default' => false],
+            'show_aliases' => ['type' => 'boolean', 'description' => 'Include container aliases in output', 'default' => false],
+            'group_by' => ['type' => 'string', 'description' => 'Group results by type, namespace or singleton', 'enum' => ['type', 'namespace', 'singleton'], 'default' => 'type'],
         ];
     }
 

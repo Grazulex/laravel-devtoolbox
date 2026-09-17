@@ -25,13 +25,13 @@ final class ProviderTimelineScanner extends AbstractScanner
         return 'Analyze service provider boot timeline and performance';
     }
 
-    public function getAvailableOptions(): array
+    public function getOptionSchema(): array
     {
         return [
-            'slow_threshold' => 'Threshold in milliseconds to mark providers as slow (default: 50)',
-            'include_deferred' => 'Include deferred providers in analysis',
-            'show_dependencies' => 'Show provider dependencies and load order',
-            'show_bindings' => 'Show services registered by each provider',
+            'slow_threshold' => ['type' => 'integer', 'description' => 'Threshold in milliseconds to mark providers as slow', 'default' => 50],
+            'include_deferred' => ['type' => 'boolean', 'description' => 'Include deferred providers in analysis', 'default' => false],
+            'show_dependencies' => ['type' => 'boolean', 'description' => 'Show provider dependencies and load order', 'default' => false],
+            'show_bindings' => ['type' => 'boolean', 'description' => 'Show services registered by each provider', 'default' => false],
         ];
     }
 

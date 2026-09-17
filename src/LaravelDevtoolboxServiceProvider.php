@@ -29,6 +29,7 @@ use Grazulex\LaravelDevtoolbox\Console\Commands\DevServicesCommand;
 use Grazulex\LaravelDevtoolbox\Console\Commands\DevSqlDuplicatesCommand;
 use Grazulex\LaravelDevtoolbox\Console\Commands\DevSqlTraceCommand;
 use Grazulex\LaravelDevtoolbox\Console\Commands\DevViewsCommand;
+use Grazulex\LaravelDevtoolbox\Mcp\McpRegistration;
 use Illuminate\Support\ServiceProvider;
 
 final class LaravelDevtoolboxServiceProvider extends ServiceProvider
@@ -51,6 +52,11 @@ final class LaravelDevtoolboxServiceProvider extends ServiceProvider
 
         // Register alias
         $this->app->alias(DevtoolboxManager::class, 'devtoolbox');
+
+        // Register the MCP response truncator (no laravel/mcp dependency, safe without the package)
+        $this->app->bind(Mcp\ResponseTruncator::class, fn ($app): Mcp\ResponseTruncator => new Mcp\ResponseTruncator(
+            (int) $app['config']->get('devtoolbox.mcp.max_response_bytes', 262_144),
+        ));
     }
 
     /**
@@ -102,6 +108,10 @@ final class LaravelDevtoolboxServiceProvider extends ServiceProvider
             $this->publishes([
                 __DIR__.'/../resources/views' => resource_path('views/vendor/devtoolbox'),
             ], 'devtoolbox-views');
+        }
+
+        if (McpRegistration::shouldRegister($this->app)) {
+            \Laravel\Mcp\Facades\Mcp::local('devtoolbox', Mcp\DevToolboxServer::class);
         }
     }
 

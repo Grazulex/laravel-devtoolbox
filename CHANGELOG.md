@@ -7,7 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v1.7.0] - 2026-09-17
+
+### Added
+- MCP server (`php artisan mcp:start devtoolbox`) exposing every scanner as a tool when `laravel/mcp` is installed. Registered only in `local`/`testing` (configurable via `devtoolbox.mcp`).
+- `AbstractScanner::getOptionSchema()`: typed option declarations, used to build MCP input schemas; `getAvailableOptions()` is now derived from it.
+- Laravel Boost guidelines (`resources/boost/guidelines/core.blade.php`) and the `devtoolbox-analysis` skill.
+- MCP status in `dev:about+`.
+
 ### Changed
+- `db-column-usage` now honours `unused_only` (only unused columns are returned, tables without any are omitted; the summary still covers every column) and `routes` now honours `filter_methods` (case-insensitive). Both options were declared but had no effect.
+- The `method` option of `sql-trace` and `sql-analysis` accepts lower-case HTTP verbs.
+- MCP responses over `devtoolbox.mcp.max_response_bytes` are now truncated inside the scanner envelope (`data.routes`, `data.column_usage`, ...) instead of collapsing `metadata`/`data` to null; the `_truncated` note reports the sliced `path`.
+
+### Removed
+- The `include_migrations`, `check_fillable` (`db-column-usage`), `show_parameters` (`container-bindings`) and `group_by_type` (`middleware`) scanner options, which were never read. CLI flags are unchanged.
 - Applied Rector refactors across `src/` (strict `in_array` checks for nullable strings, closure parameter types, removal of a redundant null argument). No behavioral change.
 - Rector rules that would add parameter types to closures guarding external data are now skipped in `rector.php`.
 - Bumped `rector/rector` to `^2.1` (2.0.0 is incompatible with recent `nikic/php-parser`).

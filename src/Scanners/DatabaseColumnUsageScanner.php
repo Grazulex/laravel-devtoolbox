@@ -21,15 +21,13 @@ final class DatabaseColumnUsageScanner extends AbstractScanner
         return 'Analyze database column usage across the Laravel application codebase';
     }
 
-    public function getAvailableOptions(): array
+    public function getOptionSchema(): array
     {
         return [
-            'tables' => 'Specific tables to analyze (array)',
-            'exclude_tables' => 'Tables to exclude from analysis (array)',
-            'scan_paths' => 'Paths to scan for column usage (array)',
-            'include_migrations' => 'Include migration files in usage analysis',
-            'unused_only' => 'Show only unused columns',
-            'check_fillable' => 'Check if columns are in model fillable arrays',
+            'tables' => ['type' => 'array', 'description' => 'Specific tables to analyze'],
+            'exclude_tables' => ['type' => 'array', 'description' => 'Tables to exclude from analysis', 'default' => ['migrations', 'password_resets', 'password_reset_tokens', 'personal_access_tokens', 'failed_jobs']],
+            'scan_paths' => ['type' => 'array', 'description' => 'Paths to scan for column usage'],
+            'unused_only' => ['type' => 'boolean', 'description' => 'Return only unused columns (tables without any are omitted); the summary still covers every column', 'default' => false],
         ];
     }
 
@@ -44,12 +42,36 @@ final class DatabaseColumnUsageScanner extends AbstractScanner
             $columnUsage[$tableName] = $this->analyzeTableColumnUsage($tableName, $columns, $options);
         }
 
+        $summary = $this->generateSummary($columnUsage);
+
+        if ($options['unused_only'] ?? false) {
+            $columnUsage = $this->onlyUnused($columnUsage);
+        }
+
         $result = [
             'column_usage' => $columnUsage,
-            'summary' => $this->generateSummary($columnUsage),
+            'summary' => $summary,
         ];
 
         return $this->addMetadata($result, $options);
+    }
+
+    /**
+     * Keeps only the unused columns of each table, dropping tables without any.
+     */
+    private function onlyUnused(array $columnUsage): array
+    {
+        $unused = [];
+
+        foreach ($columnUsage as $tableName => $columns) {
+            $unusedColumns = array_filter($columns, fn (array $info): bool => ! $info['used']);
+
+            if ($unusedColumns !== []) {
+                $unused[$tableName] = $unusedColumns;
+            }
+        }
+
+        return $unused;
     }
 
     private function getTablesInfo(array $options): array

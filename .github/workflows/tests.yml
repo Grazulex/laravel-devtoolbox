@@ -52,3 +52,27 @@ jobs:
 
       - name: Execute tests
         run: vendor/bin/pest
+
+  test-without-mcp:
+    runs-on: ubuntu-latest
+    name: Without laravel/mcp (PHP 8.4 - Laravel 13.*)
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.4
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, intl
+          coverage: none
+
+      - name: Install dependencies without laravel/mcp
+        run: |
+          composer remove laravel/mcp --dev --no-update --no-interaction
+          composer require "laravel/framework:13.*" "orchestra/testbench:11.*" --no-interaction --no-update
+          composer update --prefer-stable --prefer-dist --no-interaction
+
+      - name: Execute tests
+        run: vendor/bin/pest --exclude-group mcp

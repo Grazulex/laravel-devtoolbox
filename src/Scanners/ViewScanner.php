@@ -18,12 +18,12 @@ final class ViewScanner extends AbstractScanner
         return 'Scan Laravel views and detect unused ones';
     }
 
-    public function getAvailableOptions(): array
+    public function getOptionSchema(): array
     {
         return [
-            'detect_unused' => 'Attempt to detect unused views',
-            'include_components' => 'Include Blade components',
-            'view_paths' => 'Custom view paths to scan',
+            'detect_unused' => ['type' => 'boolean', 'description' => 'Attempt to detect unused views', 'default' => false],
+            'include_components' => ['type' => 'boolean', 'description' => 'Include Blade components', 'default' => false],
+            'view_paths' => ['type' => 'array', 'description' => 'Custom view paths to scan'],
         ];
     }
 

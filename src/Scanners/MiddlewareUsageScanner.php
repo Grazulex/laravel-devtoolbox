@@ -22,14 +22,14 @@ final class MiddlewareUsageScanner extends AbstractScanner
         return 'Analyzes middleware usage across routes, controllers, and groups';
     }
 
-    public function getAvailableOptions(): array
+    public function getOptionSchema(): array
     {
         return [
-            'middleware' => 'Specific middleware to analyze (optional)',
-            'show_routes' => 'Include detailed route information',
-            'show_groups' => 'Include route group information',
-            'show_global' => 'Include global middleware',
-            'unused_only' => 'Show only unused middleware',
+            'middleware' => ['type' => 'string', 'description' => 'Specific middleware (alias or class) to analyze; all middleware when omitted'],
+            'show_routes' => ['type' => 'boolean', 'description' => 'Include detailed route information', 'default' => false],
+            'show_groups' => ['type' => 'boolean', 'description' => 'Include route group information', 'default' => false],
+            'show_global' => ['type' => 'boolean', 'description' => 'Include global middleware', 'default' => false],
+            'unused_only' => ['type' => 'boolean', 'description' => 'Show only unused middleware', 'default' => false],
         ];
     }
 

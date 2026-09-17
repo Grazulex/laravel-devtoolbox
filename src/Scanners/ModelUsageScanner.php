@@ -18,16 +18,16 @@ final class ModelUsageScanner extends AbstractScanner
         return 'Scan for usage of a specific model throughout the application';
     }
 
-    public function getAvailableOptions(): array
+    public function getOptionSchema(): array
     {
         return [
-            'model' => 'The model class name or path to analyze',
-            'scan_controllers' => 'Scan controllers for model usage',
-            'scan_views' => 'Scan views for model usage',
-            'scan_routes' => 'Scan routes for model usage',
-            'scan_models' => 'Scan other models for relationships',
-            'scan_jobs' => 'Scan jobs for model usage',
-            'scan_observers' => 'Scan observers for model usage',
+            'model' => ['type' => 'string', 'description' => 'The model class name or path to analyze', 'required' => true],
+            'scan_controllers' => ['type' => 'boolean', 'description' => 'Scan controllers for model usage', 'default' => true],
+            'scan_views' => ['type' => 'boolean', 'description' => 'Scan views for model usage', 'default' => true],
+            'scan_routes' => ['type' => 'boolean', 'description' => 'Scan routes for model usage', 'default' => true],
+            'scan_models' => ['type' => 'boolean', 'description' => 'Scan other models for relationships', 'default' => true],
+            'scan_jobs' => ['type' => 'boolean', 'description' => 'Scan jobs for model usage', 'default' => true],
+            'scan_observers' => ['type' => 'boolean', 'description' => 'Scan observers for model usage', 'default' => true],
         ];
     }
 

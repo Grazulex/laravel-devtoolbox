@@ -25,6 +25,7 @@ Laravel Devtoolbox provides comprehensive analysis tools for Laravel application
 - **🔄 SQL Query Tracing** - Monitor and analyze database queries for specific routes
 - **📊 Multiple Export Formats** - JSON, Markdown, Mermaid diagrams, and more
 - **🛠 Developer Experience** - Rich console output with actionable insights
+- **🤖 MCP Server** - Expose every scanner as a tool for AI coding agents (optional, via `laravel/mcp`)
 
 ## 📦 Installation
 
@@ -139,6 +140,86 @@ php artisan dev:queue:analysis --failed-jobs --slow-jobs
 - `dev:performance:slow-queries` - Detect and analyze slow database queries
 - `dev:cache:analysis` - Analyze cache performance and configuration
 - `dev:queue:analysis` - Analyze queue performance, failed jobs, and job patterns
+
+## 🤖 MCP Server (AI agents)
+
+Laravel Devtoolbox can run as a local [MCP](https://modelcontextprotocol.io) server, exposing every scanner listed above as a typed tool that AI coding agents (Claude Code, Cursor, etc.) can call directly, without shelling out to Artisan and parsing text output.
+
+### Installation
+
+The server is built on `laravel/mcp`, an optional dependency — the package works exactly as before if it isn't installed:
+
+```bash
+composer require laravel/mcp --dev
+```
+
+Installing `laravel/mcp` requires `laravel/framework` 12.41.1 or later (or 13.x); on an older 12.x release, update the framework first.
+
+### Registration
+
+Register the server with Claude Code:
+
+```bash
+claude mcp add devtoolbox php artisan mcp:start devtoolbox
+```
+
+Or point any MCP-compatible client at it with a generic `.mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "devtoolbox": { "command": "php", "args": ["artisan", "mcp:start", "devtoolbox"] }
+  }
+}
+```
+
+### Available tools
+
+Each scanner is exposed as `devtoolbox-<name>`. Most tools only read application metadata (routes, models, config, source); the three marked **(active)** actually execute code — internal HTTP requests or real queries — while scanning:
+
+- `devtoolbox-models` - Scan Laravel Eloquent models and their relationships
+- `devtoolbox-routes` - Scan Laravel routes and analyze their usage
+- `devtoolbox-route-where-lookup` - Find routes that use a specific controller or method
+- `devtoolbox-container-bindings` - Analyze container bindings, singletons, and dependency injection mappings
+- `devtoolbox-middleware-usage` - Analyze middleware usage across routes, controllers, and groups
+- `devtoolbox-sql-analysis` **(active)** - Analyze SQL queries for N+1 problems, duplicates, and performance issues
+- `devtoolbox-provider-timeline` - Analyze service provider boot timeline and performance
+- `devtoolbox-commands` - Scan Laravel Artisan commands
+- `devtoolbox-services` - Scan Laravel service container bindings
+- `devtoolbox-middleware` - Scan Laravel middleware and their usage
+- `devtoolbox-views` - Scan Laravel views and detect unused ones
+- `devtoolbox-model-usage` - Scan for usage of a specific model throughout the application
+- `devtoolbox-sql-trace` **(active)** - Trace SQL queries executed during route or URL execution
+- `devtoolbox-security` - Scan for security vulnerabilities and unprotected routes
+- `devtoolbox-db-column-usage` - Analyze database column usage across the application codebase
+- `devtoolbox-performance` **(active)** - Analyze memory usage, query performance, and cache efficiency
+
+### Environment guard
+
+The server only registers itself in `local` and `testing` by default — it is never exposed in staging or production. This is controlled by `config/devtoolbox.php`:
+
+```php
+'mcp' => [
+    'enabled' => env('DEVTOOLBOX_MCP_ENABLED', true),
+    'environments' => ['local', 'testing'],
+    'max_response_bytes' => 262_144,
+],
+```
+
+- `devtoolbox.mcp.environments` — the list of `app()->environment()` values allowed to register the server.
+- `DEVTOOLBOX_MCP_ENABLED` — a hard off switch, checked in addition to the environment list.
+
+### Response truncation
+
+Large scan results are capped at `devtoolbox.mcp.max_response_bytes` (262 KB by default) so they stay usable in an agent's context window. When a result is truncated, the response includes a `_truncated` key with the original item count, how many were kept, and a hint on which options to pass to narrow the scan.
+
+### Laravel Boost
+
+Devtoolbox ships [Laravel Boost](https://github.com/laravel/boost) guidelines and a `devtoolbox-analysis` skill describing when to reach for each MCP tool (unprotected/unused routes, N+1 queries, model impact, slow providers, and more). Both are installed automatically by:
+
+```bash
+php artisan boost:install
+```
 
 ## 📊 Export Formats
 

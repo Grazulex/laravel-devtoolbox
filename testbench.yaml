@@ -3,3 +3,4 @@ workbench:
     - commands: true
 providers:
   - Grazulex\LaravelDevtoolbox\LaravelDevtoolboxServiceProvider
+  - Laravel\Mcp\Server\McpServiceProvider
