@@ -10,7 +10,10 @@
         "scanner",
         "inspector",
         "php8",
-        "pest"
+        "pest",
+        "mcp",
+        "ai",
+        "boost"
     ],
     "type": "library",
     "homepage": "https://github.com/grazulex/laravel-devtoolbox",
@@ -26,12 +29,14 @@
         "larastan/larastan": "^3.4",
         "rector/rector": "^2.1",
         "doctrine/dbal": "^4.2",
-        "orchestra/testbench": "^10.0|^11.0"
+        "orchestra/testbench": "^10.0|^11.0",
+        "laravel/mcp": "^1.0"
     },
     "minimum-stability": "stable",
     "prefer-stable": true,
     "suggest": {
-        "doctrine/dbal": "Required for command `php artisan dev:generate-migration` to generate migrations from models"
+        "doctrine/dbal": "Required for command `php artisan dev:generate-migration` to generate migrations from models",
+        "laravel/mcp": "Required to expose DevToolbox scanners as MCP tools for AI coding agents (php artisan mcp:start devtoolbox)"
     },
     "license": "MIT",
     "autoload": {

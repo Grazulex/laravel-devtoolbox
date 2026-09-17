@@ -11,3 +11,5 @@ uses(TestCase::class)->in('Feature', 'Unit');
 uses()->beforeEach(function (): void {
     $this->app->register(LaravelDevtoolboxServiceProvider::class);
 })->in('Feature', 'Unit');
+
+uses()->group('mcp')->in('Unit/Mcp', 'Feature/Mcp');

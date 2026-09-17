@@ -159,4 +159,20 @@ return [
         'filename_format' => 'devtoolbox-{type}-{date}', // {type}, {date}, {time}
         'auto_timestamp' => true,
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | MCP Server
+    |--------------------------------------------------------------------------
+    |
+    | When laravel/mcp is installed, DevToolbox registers a local MCP server
+    | ("devtoolbox") exposing every scanner as a tool for AI coding agents.
+    | The server is only registered in the listed environments.
+    |
+    */
+    'mcp' => [
+        'enabled' => env('DEVTOOLBOX_MCP_ENABLED', true),
+        'environments' => ['local', 'testing'],
+        'max_response_bytes' => 262_144,
+    ],
 ];
