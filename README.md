@@ -2,6 +2,12 @@
 
 <img src="new_logo.png" alt="Laravel Devtoolbox" width="200">
 
+> [!TIP]
+> **What Laravel Devtoolbox does for you** — One artisan toolbox to scan, inspect and debug your Laravel app: unused routes, model relationships, container bindings, env drift, SQL traces — plus an MCP server so your AI coding agent can use the same tools.
+>
+> **This package is free and maintained on my own time.** If it saves you hours, a small contribution helps me keep it going:
+> [💖 GitHub Sponsors](https://github.com/sponsors/Grazulex) · [☕ Buy Me a Coffee](https://buymeacoffee.com/grazulex) · [PayPal](https://paypal.me/strauven)
+
 Swiss-army artisan CLI for Laravel — Scan, inspect, debug, and explore every aspect of your Laravel application from the command line.
 
 [![Latest Version](https://img.shields.io/packagist/v/grazulex/laravel-devtoolbox.svg?style=flat-square)](https://packagist.org/packages/grazulex/laravel-devtoolbox)
