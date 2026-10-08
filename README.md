@@ -324,7 +324,8 @@ For complete automation scripts and CI/CD configurations, visit our **[Wiki Exam
 
 | Laravel Devtoolbox | PHP Version | Laravel Version | Status |
 |-------------------|-------------|-----------------|---------|
-| 1.6+             | 8.3+        | 12.x \| 13.x   | ✅ Active |
+| 1.8+             | 8.4+        | 12.x \| 13.x   | ✅ Active |
+| 1.6 - 1.7        | 8.3+        | 12.x \| 13.x   | ⚠️ Maintenance only |
 | 1.0 - 1.5        | 8.3+        | 11.x \| 12.x   | ⚠️ Maintenance only |
 
 > **Note:** Since v1.6.0 this package supports Laravel 12 and Laravel 13. Laravel 11 (end of life) is no longer supported; use v1.5.x if you are still on Laravel 11.

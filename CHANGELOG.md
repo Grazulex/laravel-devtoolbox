@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v1.8.0] - 2026-10-08
+
+### Changed
+- **Minimum PHP version is now 8.4**: PHP 8.3 is no longer supported (#33)
+- CI test matrix now runs PHP 8.4 and 8.5 (#33)
+
 ## [v1.7.0] - 2026-09-17
 
 ### Added
@@ -46,5 +52,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 - Laravel 11 support (end of life). Use v1.5.x if you still run Laravel 11.
 
-[Unreleased]: https://github.com/Grazulex/laravel-devtoolbox/compare/v1.6.0...HEAD
+[Unreleased]: https://github.com/Grazulex/laravel-devtoolbox/compare/v1.8.0...HEAD
+[v1.8.0]: https://github.com/Grazulex/laravel-devtoolbox/compare/v1.7.0...v1.8.0
 [v1.6.0]: https://github.com/Grazulex/laravel-devtoolbox/compare/v1.5.0...v1.6.0
