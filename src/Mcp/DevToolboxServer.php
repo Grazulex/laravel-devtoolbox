@@ -30,7 +30,7 @@ final class DevToolboxServer extends Server
     ) {
         parent::__construct($transport);
 
-        $this->version = self::packageVersion();
+        $this->version = $this->packageVersion();
         $this->scannerTools = $factory->make($manager->registry());
         $this->tools = $this->scannerTools;
     }
@@ -46,7 +46,7 @@ final class DevToolboxServer extends Server
         }
     }
 
-    private static function packageVersion(): string
+    private function packageVersion(): string
     {
         try {
             return InstalledVersions::getPrettyVersion('grazulex/laravel-devtoolbox') ?? 'dev';

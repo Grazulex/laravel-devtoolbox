@@ -9,6 +9,7 @@ use Illuminate\Container\Container;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use ReflectionClass;
 use ReflectionException;
+use ReflectionMethod;
 use ReflectionNamedType;
 
 final class ContainerBindingsScanner extends AbstractScanner
@@ -184,7 +185,7 @@ final class ContainerBindingsScanner extends AbstractScanner
             $reflection = new ReflectionClass($class);
             $constructor = $reflection->getConstructor();
 
-            if (! $constructor) {
+            if (! $constructor instanceof ReflectionMethod) {
                 return [];
             }
 

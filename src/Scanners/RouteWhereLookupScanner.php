@@ -200,7 +200,7 @@ final class RouteWhereLookupScanner extends AbstractScanner
                     'parameters' => array_map(function (ReflectionParameter $param): array {
                         $type = $param->getType();
                         $typeName = 'mixed';
-                        if ($type && $type instanceof ReflectionNamedType) {
+                        if ($type instanceof ReflectionNamedType) {
                             $typeName = $type->getName();
                         }
 
