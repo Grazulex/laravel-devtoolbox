@@ -9,6 +9,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 use ReflectionClass;
 use ReflectionException;
+use ReflectionMethod;
 use ReflectionNamedType;
 
 final class ProviderTimelineScanner extends AbstractScanner
@@ -195,7 +196,7 @@ final class ProviderTimelineScanner extends AbstractScanner
 
             // Check constructor dependencies
             $constructor = $reflection->getConstructor();
-            if ($constructor) {
+            if ($constructor instanceof ReflectionMethod) {
                 foreach ($constructor->getParameters() as $parameter) {
                     $type = $parameter->getType();
                     if ($type instanceof ReflectionNamedType && ! $type->isBuiltin()) {
