@@ -30,7 +30,7 @@
         "rector/rector": "^2.8",
         "doctrine/dbal": "^4.5",
         "orchestra/testbench": "^10.0|^11.0",
-        "laravel/mcp": "^1.1"
+        "laravel/mcp": "^1.2"
     },
     "minimum-stability": "stable",
     "prefer-stable": true,
