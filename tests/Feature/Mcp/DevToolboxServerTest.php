@@ -72,11 +72,12 @@ beforeEach(function (): void {
     Route::get('/mcp-test/public', fn (): array => ['ok' => true])->name('mcp-test.public');
 });
 
-it('lists the sixteen devtoolbox tools', function (): void {
+it('lists the seventeen devtoolbox tools', function (): void {
     $items = listedTools(DevToolboxServer::tools());
 
-    expect($items)->toHaveCount(16)
-        ->and(array_column($items, 'name'))->toContain('devtoolbox-routes');
+    expect($items)->toHaveCount(17)
+        ->and(array_column($items, 'name'))->toContain('devtoolbox-routes')
+        ->and(array_column($items, 'name'))->toContain('devtoolbox-env-calls');
 });
 
 it('runs the routes tool', function (): void {

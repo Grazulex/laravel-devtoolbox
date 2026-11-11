@@ -7,6 +7,7 @@ namespace Grazulex\LaravelDevtoolbox;
 use Grazulex\LaravelDevtoolbox\Console\Commands\DevAboutPlusCommand;
 use Grazulex\LaravelDevtoolbox\Console\Commands\DevCacheAnalysisCommand;
 use Grazulex\LaravelDevtoolbox\Console\Commands\DevCommandsCommand;
+use Grazulex\LaravelDevtoolbox\Console\Commands\DevConfigEnvCallsCommand;
 use Grazulex\LaravelDevtoolbox\Console\Commands\DevContainerBindingsCommand;
 use Grazulex\LaravelDevtoolbox\Console\Commands\DevDbColumnUsageCommand;
 use Grazulex\LaravelDevtoolbox\Console\Commands\DevEnvDiffCommand;
@@ -97,6 +98,7 @@ final class LaravelDevtoolboxServiceProvider extends ServiceProvider
                 DevPerformanceSlowQueriesCommand::class,
                 DevCacheAnalysisCommand::class,
                 DevQueueAnalysisCommand::class,
+                DevConfigEnvCallsCommand::class,
             ]);
         }
 

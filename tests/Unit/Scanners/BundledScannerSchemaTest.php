@@ -17,6 +17,7 @@ const BUNDLED_SCANNER_NAMES = [
     'models', 'routes', 'route-where-lookup', 'container-bindings', 'middleware-usage',
     'sql-analysis', 'provider-timeline', 'commands', 'services', 'middleware', 'views',
     'model-usage', 'sql-trace', 'security', 'db-column-usage', 'performance',
+    'env-calls',
 ];
 
 function bundledScanners(): array

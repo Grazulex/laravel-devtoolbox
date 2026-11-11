@@ -37,6 +37,12 @@ These two tools execute the request inside the application: only use them in loc
 2. `devtoolbox-container-bindings` with `filter` set to the slow provider's namespace → what it registers.
 3. Suggest deferring the provider or moving heavy work out of `boot()`.
 
+### 5. Settings that vanish in production
+
+1. `devtoolbox-env-calls` → every `env()` call outside `config/`, with its file, line and variable name (`key`).
+2. For each one, add the value to a config file (`'key' => env('KEY')`) and replace the call with `config('file.key')`.
+3. Re-run step 1 until it returns no call: after `php artisan config:cache`, `env()` outside `config/` returns `null`.
+
 ## Reading results
 
 Responses are JSON. A `_truncated` key means the result was cut to fit your context: re-run with narrower options (the key lists them) instead of asking for the full dump.

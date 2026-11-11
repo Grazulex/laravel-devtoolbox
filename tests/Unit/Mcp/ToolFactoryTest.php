@@ -19,7 +19,7 @@ it('builds one tool per registered scanner with a devtoolbox- prefix', function 
 
     $tools = factory()->make($registry);
 
-    expect($tools)->toHaveCount(16)
+    expect($tools)->toHaveCount(17)
         ->and(array_map(fn ($tool): string => $tool->name(), $tools))
         ->toEqualCanonicalizing(array_map(fn (string $name): string => "devtoolbox-$name", $registry->all()));
 });
@@ -41,5 +41,5 @@ it('marks exactly sql-trace, sql-analysis and performance as active', function (
     $readOnly = array_filter($tools, fn ($tool): bool => $tool instanceof ReadOnlyScannerTool);
 
     expect($active)->toEqualCanonicalizing(['sql-trace', 'sql-analysis', 'performance'])
-        ->and($readOnly)->toHaveCount(13);
+        ->and($readOnly)->toHaveCount(14);
 });
