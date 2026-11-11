@@ -15,6 +15,7 @@ Read-only tools:
 - `devtoolbox-commands`, `devtoolbox-views`: Artisan commands and Blade views (`detect_unused` for views).
 - `devtoolbox-provider-timeline`: service provider boot order and timings (`slow_threshold` in ms).
 - `devtoolbox-security`: routes without authentication or CSRF protection.
+- `devtoolbox-env-calls`: `env()` calls outside `config/`, which return `null` once `php artisan config:cache` has run.
 
 Tools that execute an internal request (local environments only):
 - `devtoolbox-sql-trace`: run one route or URL and return every SQL query (`route` or `url` is required).
@@ -27,6 +28,7 @@ Tools that execute an internal request (local environments only):
 - Before changing a model or a column, call `devtoolbox-model-usage` and `devtoolbox-db-column-usage` to measure the impact.
 - For a security review, start with `devtoolbox-security`, then `devtoolbox-middleware-usage` for the middleware involved.
 - For a slow endpoint, run `devtoolbox-sql-analysis` first, then `devtoolbox-sql-trace` on the same route to see the exact queries.
+- After adding or changing `env()` calls, call `devtoolbox-env-calls`: any result must move to a config file and be read with `config()`.
 - Results may carry a `_truncated` key: refine the call with the listed options instead of asking for "everything".
 
 ### Without MCP
