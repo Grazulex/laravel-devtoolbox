@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Grazulex\LaravelDevtoolbox\Scanners;
 
 use Illuminate\Support\Facades\Route;
+use Throwable;
 
 final class SecurityScanner extends AbstractScanner
 {
@@ -23,6 +24,7 @@ final class SecurityScanner extends AbstractScanner
         return [
             'check_unprotected_routes' => ['type' => 'boolean', 'description' => 'Check for routes without authentication middleware', 'default' => true],
             'check_csrf_protection' => ['type' => 'boolean', 'description' => 'Check for routes without CSRF protection', 'default' => true],
+            'check_throttle' => ['type' => 'boolean', 'description' => 'Check for sensitive routes without throttle middleware', 'default' => false],
             'exclude_patterns' => ['type' => 'array', 'description' => 'Route patterns to exclude from checks'],
             'critical_only' => ['type' => 'boolean', 'description' => 'Show only critical security issues', 'default' => false],
         ];
@@ -45,6 +47,10 @@ final class SecurityScanner extends AbstractScanner
 
         if ($options['check_csrf_protection'] ?? true) {
             $result['csrf_vulnerable_routes'] = $this->findCsrfVulnerableRoutes($options);
+        }
+
+        if ($options['check_throttle'] ?? false) {
+            $result['unthrottled_routes'] = $this->findUnthrottledRoutes($options);
         }
 
         $result['total_routes'] = collect(Route::getRoutes()->getRoutes())->count();
@@ -148,6 +154,81 @@ final class SecurityScanner extends AbstractScanner
         }
 
         return $vulnerableRoutes;
+    }
+
+    private function findUnthrottledRoutes(array $options): array
+    {
+        $unthrottledRoutes = [];
+        $excludePatterns = $options['exclude_patterns'] ?? [];
+        $sensitiveSegments = [
+            'login', 'logout', 'register', 'password', 'forgot-password', 'reset-password',
+            'verify', 'two-factor', 'otp', 'token', 'oauth',
+        ];
+
+        foreach (Route::getRoutes()->getRoutes() as $route) {
+            $uri = $route->uri();
+            $methods = $route->methods();
+
+            if ($this->shouldExcludeRoute($uri, $excludePatterns)) {
+                continue;
+            }
+
+            $isApi = $uri === 'api' || str_starts_with($uri, 'api/');
+            $isSensitive = false;
+            foreach ($sensitiveSegments as $segment) {
+                if (str_contains($uri, $segment)) {
+                    $isSensitive = true;
+                    break;
+                }
+            }
+
+            $dangerousMethods = array_values(array_intersect($methods, ['POST', 'PUT', 'PATCH', 'DELETE']));
+
+            // Auth-related routes are flagged for state-changing methods; API routes for any method
+            if (! $isApi && ($dangerousMethods === [] || ! $isSensitive)) {
+                continue;
+            }
+
+            if ($this->hasThrottleMiddleware($route)) {
+                continue;
+            }
+
+            $category = $isSensitive ? 'authentication' : 'api';
+
+            $unthrottledRoutes[] = [
+                'uri' => $uri,
+                'methods' => array_values(array_diff($methods, ['HEAD'])),
+                'name' => $route->getName(),
+                'action' => $route->getActionName(),
+                'middleware' => $route->middleware(),
+                'category' => $category,
+                'severity' => $isSensitive && $dangerousMethods !== [] ? 'high' : 'medium',
+                'recommendation' => 'Add throttle middleware (e.g. throttle:6,1) to limit repeated requests',
+            ];
+        }
+
+        return $unthrottledRoutes;
+    }
+
+    private function hasThrottleMiddleware(\Illuminate\Routing\Route $route): bool
+    {
+        try {
+            $middleware = app('router')->gatherRouteMiddleware($route);
+        } catch (Throwable) {
+            $middleware = $route->middleware();
+        }
+
+        foreach ($middleware as $item) {
+            if (! is_string($item)) {
+                continue;
+            }
+
+            if (str_starts_with($item, 'throttle') || str_contains($item, 'ThrottleRequests')) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private function shouldExcludeRoute(string $uri, array $excludePatterns): bool
