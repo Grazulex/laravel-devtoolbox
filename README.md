@@ -126,6 +126,8 @@ php artisan dev:queue:analysis --failed-jobs --slow-jobs
 
 ### Security Analysis
 - `dev:security:unprotected-routes` - Scan for routes that are not protected by authentication middleware
+- `dev:security:throttle` - Scan for sensitive routes (login, register, password reset, API) without throttle middleware
+- `dev:auth:audit` - Flag `can:`/`authorize` routes pointing to missing policies or abilities, and route-bound models without a policy
 
 ### Service & Container Analysis
 - `dev:services` - Examine service container bindings

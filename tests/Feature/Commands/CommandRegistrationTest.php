@@ -38,6 +38,8 @@ final class CommandRegistrationTest extends TestCase
 
             // Security and performance commands
             'dev:security:unprotected-routes',
+            'dev:security:throttle',
+            'dev:auth:audit',
             'dev:db:column-usage',
             'dev:config:env-calls',
         ];

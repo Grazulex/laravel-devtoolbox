@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Grazulex\LaravelDevtoolbox;
 
 use Grazulex\LaravelDevtoolbox\Console\Commands\DevAboutPlusCommand;
+use Grazulex\LaravelDevtoolbox\Console\Commands\DevAuthAuditCommand;
 use Grazulex\LaravelDevtoolbox\Console\Commands\DevCacheAnalysisCommand;
 use Grazulex\LaravelDevtoolbox\Console\Commands\DevCommandsCommand;
 use Grazulex\LaravelDevtoolbox\Console\Commands\DevConfigEnvCallsCommand;
@@ -25,6 +26,7 @@ use Grazulex\LaravelDevtoolbox\Console\Commands\DevRoutesCommand;
 use Grazulex\LaravelDevtoolbox\Console\Commands\DevRoutesUnusedCommand;
 use Grazulex\LaravelDevtoolbox\Console\Commands\DevRoutesWhereCommand;
 use Grazulex\LaravelDevtoolbox\Console\Commands\DevScanCommand;
+use Grazulex\LaravelDevtoolbox\Console\Commands\DevSecurityThrottleCommand;
 use Grazulex\LaravelDevtoolbox\Console\Commands\DevSecurityUnprotectedRoutesCommand;
 use Grazulex\LaravelDevtoolbox\Console\Commands\DevServicesCommand;
 use Grazulex\LaravelDevtoolbox\Console\Commands\DevSqlDuplicatesCommand;
@@ -86,6 +88,8 @@ final class LaravelDevtoolboxServiceProvider extends ServiceProvider
                 DevMiddlewareCommand::class,
                 DevViewsCommand::class,
                 DevSecurityUnprotectedRoutesCommand::class,
+                DevSecurityThrottleCommand::class,
+                DevAuthAuditCommand::class,
                 DevDbColumnUsageCommand::class,
                 DevRoutesWhereCommand::class,
                 DevLogTailCommand::class,
