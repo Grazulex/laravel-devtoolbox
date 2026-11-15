@@ -4,7 +4,12 @@ declare(strict_types=1);
 
 namespace Grazulex\LaravelDevtoolbox\Scanners;
 
+use Illuminate\Auth\Middleware\Authorize;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Reflector;
+use Illuminate\Support\Str;
 use Throwable;
 
 final class SecurityScanner extends AbstractScanner
@@ -25,6 +30,7 @@ final class SecurityScanner extends AbstractScanner
             'check_unprotected_routes' => ['type' => 'boolean', 'description' => 'Check for routes without authentication middleware', 'default' => true],
             'check_csrf_protection' => ['type' => 'boolean', 'description' => 'Check for routes without CSRF protection', 'default' => true],
             'check_throttle' => ['type' => 'boolean', 'description' => 'Check for sensitive routes without throttle middleware', 'default' => false],
+            'check_authorization' => ['type' => 'boolean', 'description' => 'Check can:/authorize routes and route-bound models for missing policies', 'default' => false],
             'exclude_patterns' => ['type' => 'array', 'description' => 'Route patterns to exclude from checks'],
             'critical_only' => ['type' => 'boolean', 'description' => 'Show only critical security issues', 'default' => false],
         ];
@@ -51,6 +57,10 @@ final class SecurityScanner extends AbstractScanner
 
         if ($options['check_throttle'] ?? false) {
             $result['unthrottled_routes'] = $this->findUnthrottledRoutes($options);
+        }
+
+        if ($options['check_authorization'] ?? false) {
+            $result['authorization_issues'] = $this->findAuthorizationIssues($options);
         }
 
         $result['total_routes'] = collect(Route::getRoutes()->getRoutes())->count();
@@ -208,6 +218,175 @@ final class SecurityScanner extends AbstractScanner
         }
 
         return $unthrottledRoutes;
+    }
+
+    private function findAuthorizationIssues(array $options): array
+    {
+        $issues = [];
+        $excludePatterns = $options['exclude_patterns'] ?? [];
+
+        foreach (Route::getRoutes()->getRoutes() as $route) {
+            $uri = $route->uri();
+
+            if ($this->shouldExcludeRoute($uri, $excludePatterns)) {
+                continue;
+            }
+
+            $boundModels = $this->getRouteBoundModels($route);
+            $checkedModels = [];
+
+            foreach ($this->getAuthorizationMiddleware($route) as $entry) {
+                $ability = $entry['ability'];
+
+                foreach ($entry['arguments'] as $argument) {
+                    $model = $boundModels[$argument] ?? (class_exists($argument) && is_subclass_of($argument, Model::class) ? $argument : null);
+
+                    if ($model === null) {
+                        continue;
+                    }
+
+                    $checkedModels[$model] = true;
+                    $state = $this->inspectPolicy($model);
+
+                    if ($state['status'] === 'missing') {
+                        $issues[] = $this->buildAuthorizationIssue($route, 'missing_policy', $model, $ability, 'high', "No policy found for {$model}; the can:{$ability} check can never pass through a policy. Create and register a policy.");
+                    } elseif ($state['status'] === 'broken') {
+                        $issues[] = $this->buildAuthorizationIssue($route, 'nonexistent_policy', $model, $ability, 'high', "The policy registered for {$model} cannot be resolved ({$state['policy']}). Fix the policy class or its registration.");
+                    } elseif ($state['status'] === 'found' && ! $this->policyHandlesAbility($state['policy'], $ability)) {
+                        $issues[] = $this->buildAuthorizationIssue($route, 'missing_ability', $model, $ability, 'medium', "Policy {$state['policy']} has no '{$ability}' method and no gate is defined with that name.");
+                    }
+                }
+            }
+
+            foreach ($boundModels as $model) {
+                if (isset($checkedModels[$model])) {
+                    continue;
+                }
+
+                $checkedModels[$model] = true;
+
+                if ($this->inspectPolicy($model)['status'] !== 'found') {
+                    $issues[] = $this->buildAuthorizationIssue($route, 'model_without_policy', $model, null, 'medium', "Model {$model} is exposed by this route but has no usable policy.");
+                }
+            }
+        }
+
+        return $issues;
+    }
+
+    private function buildAuthorizationIssue(\Illuminate\Routing\Route $route, string $type, string $model, ?string $ability, string $severity, string $recommendation): array
+    {
+        return [
+            'uri' => $route->uri(),
+            'methods' => array_values(array_diff($route->methods(), ['HEAD'])),
+            'name' => $route->getName(),
+            'action' => $route->getActionName(),
+            'type' => $type,
+            'model' => $model,
+            'ability' => $ability,
+            'severity' => $severity,
+            'recommendation' => $recommendation,
+        ];
+    }
+
+    /**
+     * @return array<int, array{ability: string, arguments: array<int, string>}>
+     */
+    private function getAuthorizationMiddleware(\Illuminate\Routing\Route $route): array
+    {
+        try {
+            $middleware = app('router')->gatherRouteMiddleware($route);
+        } catch (Throwable) {
+            $middleware = $route->middleware();
+        }
+
+        $entries = [];
+
+        foreach ($middleware as $item) {
+            if (! is_string($item)) {
+                continue;
+            }
+
+            if (str_starts_with($item, 'can:')) {
+                $parameters = mb_substr($item, 4);
+            } elseif (str_starts_with($item, Authorize::class.':')) {
+                $parameters = mb_substr($item, mb_strlen(Authorize::class) + 1);
+            } else {
+                continue;
+            }
+
+            $parts = array_values(array_filter(array_map('trim', explode(',', $parameters)), fn (string $part): bool => $part !== ''));
+
+            if ($parts === []) {
+                continue;
+            }
+
+            $entries[] = [
+                'ability' => array_shift($parts),
+                'arguments' => $parts,
+            ];
+        }
+
+        return $entries;
+    }
+
+    /**
+     * Map route parameter names to the Eloquent model class they are type-hinted with.
+     *
+     * @return array<string, class-string>
+     */
+    private function getRouteBoundModels(\Illuminate\Routing\Route $route): array
+    {
+        try {
+            $parameters = $route->signatureParameters(['subClass' => Model::class]);
+        } catch (Throwable) {
+            return [];
+        }
+
+        $models = [];
+
+        foreach ($parameters as $parameter) {
+            $class = Reflector::getParameterClassName($parameter);
+
+            if ($class !== null && is_subclass_of($class, Model::class)) {
+                $models[$parameter->getName()] = $class;
+            }
+        }
+
+        return $models;
+    }
+
+    /**
+     * @return array{status: string, policy: string|null}
+     */
+    private function inspectPolicy(string $model): array
+    {
+        try {
+            $policy = Gate::getPolicyFor($model);
+        } catch (Throwable) {
+            $registered = Gate::policies()[$model] ?? null;
+
+            return ['status' => 'broken', 'policy' => is_string($registered) ? $registered : null];
+        }
+
+        if ($policy === null || ! is_object($policy)) {
+            return ['status' => 'missing', 'policy' => null];
+        }
+
+        return ['status' => 'found', 'policy' => $policy::class];
+    }
+
+    private function policyHandlesAbility(?string $policy, string $ability): bool
+    {
+        if (Gate::has($ability)) {
+            return true;
+        }
+
+        if ($policy === null) {
+            return false;
+        }
+
+        return method_exists($policy, $ability) || method_exists($policy, Str::camel($ability));
     }
 
     private function hasThrottleMiddleware(\Illuminate\Routing\Route $route): bool

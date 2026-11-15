@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Grazulex\LaravelDevtoolbox;
 
 use Grazulex\LaravelDevtoolbox\Console\Commands\DevAboutPlusCommand;
+use Grazulex\LaravelDevtoolbox\Console\Commands\DevAuthAuditCommand;
 use Grazulex\LaravelDevtoolbox\Console\Commands\DevCacheAnalysisCommand;
 use Grazulex\LaravelDevtoolbox\Console\Commands\DevCommandsCommand;
 use Grazulex\LaravelDevtoolbox\Console\Commands\DevConfigEnvCallsCommand;
@@ -88,6 +89,7 @@ final class LaravelDevtoolboxServiceProvider extends ServiceProvider
                 DevViewsCommand::class,
                 DevSecurityUnprotectedRoutesCommand::class,
                 DevSecurityThrottleCommand::class,
+                DevAuthAuditCommand::class,
                 DevDbColumnUsageCommand::class,
                 DevRoutesWhereCommand::class,
                 DevLogTailCommand::class,
