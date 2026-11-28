@@ -9,6 +9,7 @@ use Grazulex\LaravelDevtoolbox\Scanners\CommandScanner;
 use Grazulex\LaravelDevtoolbox\Scanners\ContainerBindingsScanner;
 use Grazulex\LaravelDevtoolbox\Scanners\DatabaseColumnUsageScanner;
 use Grazulex\LaravelDevtoolbox\Scanners\EnvCallsScanner;
+use Grazulex\LaravelDevtoolbox\Scanners\LangMissingScanner;
 use Grazulex\LaravelDevtoolbox\Scanners\MiddlewareScanner;
 use Grazulex\LaravelDevtoolbox\Scanners\MiddlewareUsageScanner;
 use Grazulex\LaravelDevtoolbox\Scanners\ModelScanner;
@@ -121,5 +122,6 @@ final class DevtoolboxManager
         $this->registry->register('db-column-usage', new DatabaseColumnUsageScanner($this->app));
         $this->registry->register('performance', new PerformanceScanner($this->app));
         $this->registry->register('env-calls', new EnvCallsScanner($this->app));
+        $this->registry->register('lang-missing', new LangMissingScanner($this->app));
     }
 }

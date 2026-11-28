@@ -42,6 +42,7 @@ final class CommandRegistrationTest extends TestCase
             'dev:auth:audit',
             'dev:db:column-usage',
             'dev:config:env-calls',
+            'dev:lang:missing',
         ];
 
         foreach ($expectedCommands as $command) {

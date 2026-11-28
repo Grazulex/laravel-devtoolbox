@@ -84,6 +84,9 @@ php artisan dev:env:diff --against=.env.example
 # Find env() calls that break once the config is cached
 php artisan dev:config:env-calls --fail-on-found
 
+# Find translation keys used in the code but missing in a locale
+php artisan dev:lang:missing --fail-on-missing
+
 # Analyze database column usage
 php artisan dev:db:column-usage --unused-only
 
@@ -146,6 +149,7 @@ php artisan dev:queue:analysis --failed-jobs --slow-jobs
 - `dev:env:diff` - Compare environment configuration files
 - `dev:log:tail` - Monitor Laravel logs with real-time filtering and pattern matching
 - `dev:config:env-calls` - Find `env()` calls outside `config/`, which return `null` once `php artisan config:cache` has run
+- `dev:lang:missing` - Find translation keys used in `__()`, `trans()` and `trans_choice()` calls that have no translation in one or more locales
 
 ### Performance Analysis (new!)
 - `dev:performance:memory` - Analyze memory usage patterns and performance
@@ -206,6 +210,7 @@ Each scanner is exposed as `devtoolbox-<name>`. Most tools only read application
 - `devtoolbox-db-column-usage` - Analyze database column usage across the application codebase
 - `devtoolbox-performance` **(active)** - Analyze memory usage, query performance, and cache efficiency
 - `devtoolbox-env-calls` - Find env() calls outside the config directory, which return null once the configuration is cached
+- `devtoolbox-lang-missing` - Find translation keys used in __(), trans() and trans_choice() calls that have no translation in one or more locales
 
 ### Environment guard
 

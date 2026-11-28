@@ -12,6 +12,7 @@ use Grazulex\LaravelDevtoolbox\Console\Commands\DevConfigEnvCallsCommand;
 use Grazulex\LaravelDevtoolbox\Console\Commands\DevContainerBindingsCommand;
 use Grazulex\LaravelDevtoolbox\Console\Commands\DevDbColumnUsageCommand;
 use Grazulex\LaravelDevtoolbox\Console\Commands\DevEnvDiffCommand;
+use Grazulex\LaravelDevtoolbox\Console\Commands\DevLangMissingCommand;
 use Grazulex\LaravelDevtoolbox\Console\Commands\DevLogTailCommand;
 use Grazulex\LaravelDevtoolbox\Console\Commands\DevMiddlewareCommand;
 use Grazulex\LaravelDevtoolbox\Console\Commands\DevMiddlewaresWhereUsedCommand;
@@ -103,6 +104,7 @@ final class LaravelDevtoolboxServiceProvider extends ServiceProvider
                 DevCacheAnalysisCommand::class,
                 DevQueueAnalysisCommand::class,
                 DevConfigEnvCallsCommand::class,
+                DevLangMissingCommand::class,
             ]);
         }
 
