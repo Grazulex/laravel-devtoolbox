@@ -16,6 +16,7 @@ Read-only tools:
 - `devtoolbox-provider-timeline`: service provider boot order and timings (`slow_threshold` in ms).
 - `devtoolbox-security`: routes without authentication or CSRF protection.
 - `devtoolbox-env-calls`: `env()` calls outside `config/`, which return `null` once `php artisan config:cache` has run.
+- `devtoolbox-lang-missing`: translation keys used in `__()`, `trans()` and `trans_choice()` calls that have no translation in one or more locales (`locales` to restrict the check).
 
 Tools that execute an internal request (local environments only):
 - `devtoolbox-sql-trace`: run one route or URL and return every SQL query (`route` or `url` is required).
@@ -29,6 +30,7 @@ Tools that execute an internal request (local environments only):
 - For a security review, start with `devtoolbox-security`, then `devtoolbox-middleware-usage` for the middleware involved.
 - For a slow endpoint, run `devtoolbox-sql-analysis` first, then `devtoolbox-sql-trace` on the same route to see the exact queries.
 - After adding or changing `env()` calls, call `devtoolbox-env-calls`: any result must move to a config file and be read with `config()`.
+- After adding or renaming translation keys, call `devtoolbox-lang-missing`: every key it returns needs a line in the language files of the locales listed in `missing_in`.
 - Results may carry a `_truncated` key: refine the call with the listed options instead of asking for "everything".
 
 ### Without MCP
